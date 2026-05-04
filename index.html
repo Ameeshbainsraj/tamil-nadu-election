@@ -1,75 +1,147 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>TN Election Live 2026</title>
+  <title>Tamil Nadu Election 2026 · Live Results</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
 
   <!-- VICTORY OVERLAY -->
   <div id="victory-overlay" class="hidden">
+    <div class="confetti-container" id="confetti"></div>
     <div class="victory-inner">
       <div class="victory-badge">⚡ WINNER DECLARED ⚡</div>
       <div id="victory-party-name"></div>
-      <div class="victory-seats-label">seats secured</div>
+      <div class="victory-seats-label">seats won &amp; leading</div>
       <div id="victory-seat-count"></div>
-      <div class="victory-sub">Tamil Nadu 2026 · Majority Achieved</div>
+      <div class="victory-sub">TAMIL NADU ASSEMBLY 2026 · MAJORITY ACHIEVED</div>
+      <button class="victory-close" onclick="document.getElementById('victory-overlay').classList.add('hidden')">DISMISS</button>
     </div>
-    <div id="confetti" class="confetti-container"></div>
   </div>
 
   <!-- HEADER -->
   <header>
-    <div class="header-left">
-      <div class="live-pill">
-        <span class="live-dot"></span>
-        <span class="live-label">LIVE</span>
+    <div class="header-inner">
+      <div>
+        <div class="live-badge">
+          <span class="live-dot"></span>
+          <span class="live-text">LIVE</span>
+        </div>
+      </div>
+      <div class="header-title">
+        <span class="header-title-main">Tamil Nadu Election 2026</span>
+        <span class="header-title-sub">Assembly Results · Live Count</span>
+      </div>
+      <div class="header-time">
+        <div class="update-dot"></div>
+        <div class="update-text" id="last-updated">Connecting…</div>
       </div>
     </div>
-    <div class="header-title">Tamil Nadu Election 2026</div>
-    <div class="header-right" id="last-updated">—</div>
   </header>
 
-  <!-- MAJORITY BANNER -->
-  <div class="majority-banner">
-    <span>Majority Mark</span>
-    <span class="majority-number">118 / 234 Seats</span>
-    <span>Assembly Elections</span>
+  <!-- MAJORITY STRIP -->
+  <div class="majority-strip">
+    <div class="maj-item">Total Seats <span class="maj-num">234</span></div>
+    <div class="maj-divider"></div>
+    <div class="maj-item">Majority Mark <span class="maj-num">118 seats</span></div>
+    <div class="maj-divider"></div>
+    <div class="maj-item">Seats Declared <span class="maj-num" id="strip-declared">0</span></div>
+  </div>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-inner">
+      <div class="hero-declared">
+        <div class="hero-declared-num" id="hero-declared">0</div>
+        <div class="hero-declared-label">Seats Declared</div>
+        <div class="hero-progress-wrap">
+          <div class="hero-progress-track">
+            <div id="hero-progress-bar" class="hero-progress-fill"></div>
+            <div class="hero-progress-mid"></div>
+          </div>
+          <div class="hero-progress-label">OF 234 TOTAL</div>
+        </div>
+      </div>
+
+      <div class="hero-separator"></div>
+
+      <div class="hero-leading">
+        <div class="hero-leading-label">Currently Leading</div>
+        <div class="hero-leading-party" id="hero-leading-party">—</div>
+        <div class="hero-leading-sub" id="hero-leading-sub">Counting in progress</div>
+      </div>
+    </div>
   </div>
 
   <!-- MAIN -->
   <main>
 
-    <!-- CARDS injected by JS -->
-    <section class="party-cards" id="party-cards"></section>
+    <!-- PARTY CARDS -->
+    <section>
+      <div class="sec-label">Party-wise Seats · Won + Leading</div>
+      <div class="party-cards" id="party-cards"></div>
+    </section>
 
-    <!-- BOTTOM -->
-    <section class="bottom-grid">
+    <!-- RACE TO MAJORITY -->
+    <section class="race-section">
+      <div class="sec-label">Race to 118 — How far is each party from majority?</div>
+      <div class="race-bars" id="race-bars"></div>
+    </section>
 
-      <div class="panel panel-leading">
-        <div class="panel-label">Currently Leading</div>
-        <div class="leading-party" id="leading-party">—</div>
+    <!-- DONUT + ALLIANCE -->
+    <div class="viz-row">
+      <div class="donut-panel">
+        <div class="sec-label">Seat Share</div>
+        <div class="donut-wrap">
+          <svg id="donut-svg" viewBox="0 0 140 140" width="130" height="130" style="flex-shrink:0">
+            <circle cx="70" cy="70" r="54" fill="none" stroke="#e0ddd5" stroke-width="20"/>
+          </svg>
+          <div class="legend" id="donut-legend">
+            <div class="legend-empty">No results yet</div>
+          </div>
+        </div>
+      </div>
+      <div class="alliance-panel">
+        <div class="sec-label">Alliance Totals vs Majority (118)</div>
+        <div class="alliance-rows" id="alliance-bars"></div>
+      </div>
+    </div>
+
+    <!-- BOTTOM GRID -->
+    <div class="bottom-grid">
+      <div class="panel-leading">
+        <div class="leading-label">Currently Leading</div>
+        <div class="leading-party-name" id="leading-party">—</div>
         <div class="leading-sub" id="leading-sub">Counting in progress</div>
       </div>
-
-      <div class="panel panel-insight">
-        <div class="panel-label">Live Insight</div>
+      <div class="panel-insight">
+        <div class="sec-label">Live Insight</div>
         <div class="insight-line" id="insight-meaning">📊 Counting has just begun.</div>
         <div class="insight-line" id="insight-closest">🏁 No clear leader yet.</div>
-        <div class="insight-line" id="insight-trend">📈 Trend: Too early to call.</div>
+        <div class="insight-line" id="insight-trend">📈 Too early to call.</div>
       </div>
-
-    </section>
+    </div>
 
   </main>
 
-  <footer>
-    <span>Auto-refreshes every 12 seconds &nbsp;·&nbsp; Tamil Nadu Assembly Elections 2026</span>
-  </footer>
+  <!-- TICKER -->
+  <div class="ticker">
+    <div class="ticker-inner" id="ticker-inner">
+      <span class="ticker-item">TVK <span style="color:#c8951a">0</span></span>
+      <span class="ticker-sep">·</span>
+      <span class="ticker-item">DMK+ <span style="color:#c62828">0</span></span>
+      <span class="ticker-sep">·</span>
+      <span class="ticker-item">ADMK+ <span style="color:#2e7d32">0</span></span>
+      <span class="ticker-sep">·</span>
+      <span class="ticker-item">NTK <span style="color:#1976d2">0</span></span>
+    </div>
+  </div>
+
+  <footer>Auto-refreshes every 12 seconds &nbsp;·&nbsp; Tamil Nadu Assembly Elections 2026 &nbsp;·&nbsp; Official Results</footer>
 
   <script src="app.js"></script>
 </body>

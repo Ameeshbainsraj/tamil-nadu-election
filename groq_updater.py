@@ -21,7 +21,12 @@ import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 
 # ── CONFIG ────────────────────────────────────────
-GROQ_API_KEY   = "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"       # https://console.groq.com
+from dotenv import load_dotenv
+load_dotenv()
+GROQ_API_KEY = os.environ.get("GROQ_API_KEY")
+if not GROQ_API_KEY:
+    print("ERROR: GROQ_API_KEY not found. Check your .env file.")
+    sys.exit(1)
 SHEET_ID       = "1170HdchakPRIZO4URqot2jfAhtkorl1tP9-Tpq80Ia0"
 CREDS_JSON     = "service_account.json"         # Google Service Account credentials
 
@@ -140,7 +145,7 @@ def update_google_sheet(data: dict):
 
 def main():
     if len(sys.argv) < 2:
-        print("Usage: python groq_updater.py \"https://www.youtube.com/watch?v=cLtjuwB3sh8\"")
+        print("Usage: python groq_updater.py \"https://www.youtube.com/watch?v=XXXX\"")
         sys.exit(1)
 
     yt_url = sys.argv[1]

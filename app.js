@@ -3,8 +3,8 @@ const MAJORITY = 118;
 const TOTAL_SEATS = 234;
 const REFRESH_INTERVAL = 12000;
 
-const SHEET_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSa1i5BKO3-c2Lm3Gxcc9XLo7qeMhEFKzZtlnXt84Hb03W8wu7f91LvsKs7brLBK07K9t6YBwh2AZL5/pub?gid=0&single=true&output=csv';
-const SHEET_URL = 'https://corsproxy.io/?' + encodeURIComponent(SHEET_CSV);
+const SHEET_ID = '2PACX-1vSa1i5BKO3-c2Lm3Gxcc9XLo7qeMhEFKzZtlnXt84Hb03W8wu7f91LvsKs7brLBK07K9t6YBwh2AZL5';
+const SHEET_URL = `https://docs.google.com/spreadsheets/d/e/${SHEET_ID}/pub?gid=0&single=true&output=csv`;
 // ── PARSE CSV ──
 function parseCSV(text) {
   const lines = text.trim().split('\n');
@@ -186,20 +186,30 @@ function render(data) {
   checkVictory(parties);
 }
 
-// ── FETCH FROM GOOGLE SHEET ──
 async function fetchData() {
   try {
-    const res = await fetch(SHEET_URL + '&t=' + Date.now());
-    const text = await res.text();
-    const rows = parseCSV(text);
-    const data = buildData(rows);
+    const jsonURL = `https://opensheet.elk.sh/e/${SHEET_ID}/Sheet1`;
+    const res = await fetch(jsonURL);
+    const rows = await res.json();
+    const data = {
+      last_updated: new Date().toLocaleTimeString(),
+      parties: {}
+    };
+    rows.forEach(row => {
+      const key = row.party.toLowerCase();
+      data.parties[key] = {
+        name: row.party,
+        short: row.party,
+        seats: parseInt(row.seats) || 0,
+        won: parseInt(row.won) || 0
+      };
+    });
     render(data);
   } catch (err) {
-    console.error('Sheet fetch failed:', err);
+    console.error('Fetch failed:', err);
     document.getElementById('last-updated').textContent = '⚠️ Update failed';
   }
 }
-
 // ── START ──
 fetchData();
 setInterval(fetchData, REFRESH_INTERVAL);

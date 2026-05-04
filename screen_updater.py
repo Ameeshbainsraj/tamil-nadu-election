@@ -1,4 +1,4 @@
-import sys, subprocess, datetime, json, os, re, base64
+import subprocess, datetime, json, os, re, time, base64
 import yt_dlp
 from groq import Groq
 from dotenv import load_dotenv
@@ -6,8 +6,8 @@ from dotenv import load_dotenv
 load_dotenv()
 client = Groq(api_key=os.environ.get("GROQ_API_KEY"))
 
-
 def grab_youtube_frame(yt_url: str) -> str:
+    """Download a single frame from the YouTube stream as an image."""
     import tempfile
     tmpdir = tempfile.mkdtemp()
     frame_path = os.path.join(tmpdir, "frame.jpg")
@@ -17,18 +17,20 @@ def grab_youtube_frame(yt_url: str) -> str:
         "quiet": True,
         "no_warnings": True,
     }
+    # Get stream URL
     with yt_dlp.YoutubeDL(opts) as ydl:
         info = ydl.extract_info(yt_url, download=False)
         stream_url = info["url"]
 
+    # Use ffmpeg to grab one frame
     subprocess.run([
         "ffmpeg", "-y", "-i", stream_url,
         "-frames:v", "1", "-q:v", "2", frame_path
     ], capture_output=True)
     return frame_path
 
-
 def extract_seats_from_image(img_path: str) -> dict:
+    """Send frame to Groq Vision → extract seat numbers."""
     print("👁️  Reading text from video frame...")
     with open(img_path, "rb") as f:
         b64 = base64.b64encode(f.read()).decode()
@@ -64,23 +66,7 @@ Return ONLY this JSON:
     match = re.search(r'\{.*\}', raw, re.DOTALL)
     if not match:
         raise ValueError(f"No JSON in response: {raw}")
-
-    # ── FIX: robust JSON parsing ──────────────────
-    cleaned = match.group()
-    cleaned = re.sub(r',\s*}', '}', cleaned)
-    cleaned = re.sub(r',\s*]', ']', cleaned)
-    cleaned = re.sub(r'(\d)\s+(\d)', r'\1\2', cleaned)
-    try:
-        return json.loads(cleaned)
-    except json.JSONDecodeError:
-        print(f"⚠️  JSON parse failed, extracting manually from:\n{raw}")
-        result = {}
-        for party in ["tvk", "dmk", "admk", "ntk", "others"]:
-            m = re.search(rf'"{party}".*?"seats":\s*(\d+)', raw, re.DOTALL)
-            result[party] = {"seats": int(m.group(1)) if m else 0, "won": 0, "leading": 0}
-        return result
-    # ─────────────────────────────────────────────
-
+    return json.loads(match.group())
 
 def write_and_push(data: dict):
     output = {
@@ -98,10 +84,9 @@ def write_and_push(data: dict):
     except subprocess.CalledProcessError as e:
         print(f"⚠️  Git push failed: {e}")
 
-
 def main():
     if len(sys.argv) < 2:
-        print('Usage: python screen_updater.py "https://www.youtube.com/watch?v=XXXX"')
+        print("Usage: python screen_updater.py \"https://www.youtube.com/watch?v=XXXX\"")
         sys.exit(1)
 
     yt_url = sys.argv[1]
@@ -114,6 +99,6 @@ def main():
     import shutil
     shutil.rmtree(os.path.dirname(frame), ignore_errors=True)
 
-
+import sys
 if __name__ == "__main__":
     main()

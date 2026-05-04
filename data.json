@@ -1,0 +1,22 @@
+{
+  "last_updated": "2026-05-04 10:00:00",
+  "total_seats": 234,
+  "majority": 118,
+  "parties": {
+    "tvk": {
+      "name": "Tamil Vettri Kazhagam",
+      "short": "TVK",
+      "seats": 45
+    },
+    "dmk": {
+      "name": "Dravida Munnetra Kazhagam",
+      "short": "DMK",
+      "seats": 72
+    },
+    "others": {
+      "name": "Others & Independents",
+      "short": "OTH",
+      "seats": 31
+    }
+  }
+}

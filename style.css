@@ -1,0 +1,355 @@
+/* ── RESET & BASE ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:        #080c14;
+  --surface:   #0e1623;
+  --border:    #1c2a3a;
+  --text:      #e8edf5;
+  --muted:     #5a6a7e;
+  --tvk:       #f97316;
+  --dmk:       #3b82f6;
+  --others:    #8b5cf6;
+  --win:       #22c55e;
+  --danger:    #ef4444;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── HEADER ── */
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 32px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.live-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--danger);
+  animation: pulse 1.4s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.4; transform: scale(1.3); }
+}
+
+.live-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--danger);
+  letter-spacing: 2px;
+}
+
+.header-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 22px;
+  letter-spacing: 2px;
+  color: var(--text);
+}
+
+.header-right {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+/* ── MAJORITY BANNER ── */
+.majority-banner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  padding: 10px;
+  background: #0a1628;
+  border-bottom: 1px solid var(--border);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: var(--muted);
+  letter-spacing: 1.5px;
+}
+
+.majority-number {
+  color: var(--win);
+  font-weight: 600;
+}
+
+/* ── MAIN ── */
+main {
+  flex: 1;
+  padding: 32px 24px;
+  max-width: 1100px;
+  width: 100%;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* ── PARTY CARDS ── */
+.party-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 28px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.2s;
+}
+
+.card:hover { transform: translateY(-3px); }
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+}
+.card-tvk::before    { background: var(--tvk); }
+.card-dmk::before    { background: var(--dmk); }
+.card-others::before { background: var(--others); }
+
+.card-party-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 3px;
+  color: var(--muted);
+}
+
+.card-tvk .card-party-tag    { color: var(--tvk); }
+.card-dmk .card-party-tag    { color: var(--dmk); }
+.card-others .card-party-tag { color: var(--others); }
+
+.card-party-name {
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+
+.card-seats {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 72px;
+  line-height: 1;
+  letter-spacing: 2px;
+  transition: color 0.4s;
+}
+
+.card-tvk .card-seats    { color: var(--tvk); }
+.card-dmk .card-seats    { color: var(--dmk); }
+.card-others .card-seats { color: var(--others); }
+
+.card-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: var(--muted);
+  margin-bottom: 12px;
+}
+
+/* Progress bar */
+.card-bar-track {
+  width: 100%;
+  height: 4px;
+  background: var(--border);
+  border-radius: 99px;
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+
+.card-bar {
+  height: 100%;
+  border-radius: 99px;
+  transition: width 0.8s cubic-bezier(0.4,0,0.2,1);
+}
+
+.card-tvk .card-bar    { background: var(--tvk); }
+.card-dmk .card-bar    { background: var(--dmk); }
+.card-others .card-bar { background: var(--others); }
+
+.card-needs {
+  font-size: 12px;
+  color: var(--muted);
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.card-needs.achieved { color: var(--win); font-weight: 600; }
+
+/* ── BOTTOM GRID ── */
+.bottom-grid {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 20px;
+}
+
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 28px 24px;
+}
+
+.panel-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: var(--muted);
+  margin-bottom: 16px;
+}
+
+.leading-party {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 52px;
+  letter-spacing: 3px;
+  color: var(--win);
+  line-height: 1;
+}
+
+.leading-sub {
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: 8px;
+}
+
+.insight-line {
+  font-size: 14px;
+  color: var(--text);
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+  line-height: 1.5;
+}
+
+.insight-line:last-child { border-bottom: none; }
+
+/* ── FOOTER ── */
+footer {
+  text-align: center;
+  padding: 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--muted);
+  border-top: 1px solid var(--border);
+}
+
+/* ── VICTORY OVERLAY ── */
+#victory-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.92);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+  animation: fadeIn 0.6s ease;
+}
+
+#victory-overlay.hidden { display: none; }
+
+@keyframes fadeIn {
+  from { opacity: 0; } to { opacity: 1; }
+}
+
+.victory-inner {
+  text-align: center;
+  position: relative;
+}
+
+.victory-badge {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  letter-spacing: 4px;
+  color: var(--win);
+  margin-bottom: 16px;
+  animation: blink 1s infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; } 50% { opacity: 0.3; }
+}
+
+#victory-party-name {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 120px;
+  line-height: 1;
+  color: var(--text);
+  letter-spacing: 6px;
+}
+
+.victory-seats-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 4px;
+  color: var(--muted);
+  margin-top: 12px;
+}
+
+#victory-seat-count {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 80px;
+  color: var(--win);
+  line-height: 1;
+}
+
+/* ── CONFETTI ── */
+.confetti-container {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 998;
+}
+
+.confetti-piece {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  top: -10px;
+  animation: fall linear infinite;
+  border-radius: 2px;
+}
+
+@keyframes fall {
+  to { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+}
+
+/* ── MOBILE ── */
+@media (max-width: 768px) {
+  .party-cards   { grid-template-columns: 1fr; }
+  .bottom-grid   { grid-template-columns: 1fr; }
+  .header-title  { font-size: 16px; }
+  .card-seats    { font-size: 56px; }
+  #victory-party-name { font-size: 72px; }
+}

@@ -188,7 +188,7 @@ function render(data) {
 
 async function fetchData() {
   try {
-    const jsonURL = `https://opensheet.elk.sh/e/${SHEET_ID}/Sheet1`;
+    const jsonURL = `https://opensheet.elk.sh/1170HdchakPRIZO4URqot2jfAhtkorl1tP9-Tpq80Ia0/Sheet1`;
     const res = await fetch(jsonURL);
     const rows = await res.json();
     const data = {

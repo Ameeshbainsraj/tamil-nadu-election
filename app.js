@@ -3,19 +3,19 @@ const MAJORITY = 118;
 const TOTAL_SEATS = 234;
 const REFRESH_INTERVAL = 12000;
 
-// Party metadata — colours match the new systematic palette
 const PARTY_META = {
-  tvk:    { color: '#C0392B', full: 'Tamil Vettri Kazhagam',     alliance: 'TVK' },
-  dmk:    { color: '#1A6B9A', full: 'Dravida Munnetra Kazhagam', alliance: 'DMK+' },
-  admk:   { color: '#2E7D32', full: 'All India Anna DMK',        alliance: 'ADMK+' },
-  others: { color: '#6D4C41', full: 'Others & Independents',     alliance: 'Others' },
+  tvk:    { color: '#ff6b1a', glow: 'rgba(255,107,26,0.3)',  full: 'Tamil Vettri Kazhagam',       alliance: 'TVK' },
+  dmk:    { color: '#3b9eff', glow: 'rgba(59,158,255,0.3)',  full: 'Dravida Munnetra Kazhagam',   alliance: 'DMK+' },
+  admk:   { color: '#ff3d8a', glow: 'rgba(255,61,138,0.3)',  full: 'All India Anna DMK',          alliance: 'ADMK+' },
+  others: { color: '#a855f7', glow: 'rgba(168,85,247,0.3)',  full: 'Others & Independents',       alliance: 'Others' },
 };
 
+// Alliance groupings: which party keys belong to which alliance
 const ALLIANCES = {
-  'TVK Alliance':  { keys: ['tvk'],   color: '#C0392B' },
-  'DMK+ Alliance': { keys: ['dmk'],   color: '#1A6B9A' },
-  'ADMK+':         { keys: ['admk'],  color: '#2E7D32' },
-  'Others':        { keys: ['others'],color: '#6D4C41' },
+  'TVK Alliance':  { keys: ['tvk'],          color: '#ff6b1a', glow: 'rgba(255,107,26,0.3)' },
+  'DMK+ Alliance': { keys: ['dmk'],          color: '#3b9eff', glow: 'rgba(59,158,255,0.3)' },
+  'ADMK+':         { keys: ['admk'],         color: '#ff3d8a', glow: 'rgba(255,61,138,0.3)' },
+  'Others':        { keys: ['others'],       color: '#a855f7', glow: 'rgba(168,85,247,0.3)' },
 };
 
 let prevSeats = {};
@@ -25,17 +25,17 @@ let victoryShown = false;
 function launchConfetti(color) {
   const container = document.getElementById('confetti');
   container.innerHTML = '';
-  const colors = [color, '#D4860A', '#F0A020', '#fff', '#1B7A3E'];
-  for (let i = 0; i < 140; i++) {
+  const colors = [color, '#ffffff', '#ffd700', '#00e676', '#ff6b6b'];
+  for (let i = 0; i < 160; i++) {
     const piece = document.createElement('div');
     piece.className = 'confetti-piece';
     piece.style.cssText = `
       left:${Math.random()*100}vw;
       background:${colors[Math.floor(Math.random()*colors.length)]};
       animation-duration:${Math.random()*3+2}s;
-      animation-delay:${Math.random()*2.5}s;
-      width:${Math.random()*8+4}px;
-      height:${Math.random()*8+4}px;
+      animation-delay:${Math.random()*3}s;
+      width:${Math.random()*10+4}px;
+      height:${Math.random()*10+4}px;
       border-radius:${Math.random()>0.5?'50%':'2px'};
     `;
     container.appendChild(piece);
@@ -53,11 +53,11 @@ function checkVictory(parties) {
       const nameEl = document.getElementById('victory-party-name');
       nameEl.textContent = p.short;
       nameEl.style.color = meta.color || '#fff';
-      const countEl = document.getElementById('victory-seat-count');
-      countEl.textContent = p.seats;
-      countEl.style.color = meta.color || '#fff';
+      nameEl.style.textShadow = `0 0 80px ${meta.glow}`;
+      document.getElementById('victory-seat-count').textContent = p.seats;
+      document.getElementById('victory-seat-count').style.color = meta.color || '#fff';
       document.getElementById('victory-overlay').classList.remove('hidden');
-      launchConfetti(meta.color || '#D4860A');
+      launchConfetti(meta.color || '#ffffff');
     }
   }
 }
@@ -66,7 +66,7 @@ function checkVictory(parties) {
 function animateCount(el, newVal) {
   const oldVal = parseInt(el.textContent) || 0;
   if (oldVal === newVal) return;
-  const duration = 900;
+  const duration = 800;
   const start = performance.now();
   const update = (now) => {
     const t = Math.min((now - start) / duration, 1);
@@ -81,12 +81,13 @@ function animateCount(el, newVal) {
   el.classList.add('seat-updated');
 }
 
-// ── HELPERS ──
+// ── NEEDS TEXT ──
 function getNeedsText(seats) {
-  if (seats >= MAJORITY) return '✅ Majority Achieved';
-  return `Needs ${MAJORITY - seats} more`;
+  if (seats >= MAJORITY) return '✅ Majority Achieved!';
+  return `Needs ${MAJORITY - seats} more to win`;
 }
 
+// ── LEADING PARTY ──
 function getLeader(parties) {
   let leader = null, max = -1;
   for (const key in parties) {
@@ -98,6 +99,7 @@ function getLeader(parties) {
   return leader;
 }
 
+// ── INSIGHTS ──
 function getInsights(parties, leader) {
   const keys = Object.keys(parties);
   const counted = keys.reduce((s, k) => s + parties[k].seats, 0);
@@ -108,18 +110,18 @@ function getInsights(parties, leader) {
   if (pct > 80) meaning = `📊 ${pct}% declared — result is becoming very clear.`;
 
   const closest = leader
-    ? `🏁 ${leader.short} leads with ${leader.seats} seats — needs ${Math.max(0, MAJORITY - leader.seats)} more for majority.`
+    ? `🏁 ${leader.short} is closest to majority with ${leader.seats} seats — needs ${Math.max(0, MAJORITY - leader.seats)} more.`
     : '🏁 No clear leader yet.';
 
   const sorted = [...keys].sort((a, b) => parties[b].seats - parties[a].seats);
   let trend = '📈 Trend: Too early to call.';
-  if (sorted.length >= 2 && counted > 0) {
+  if (sorted.length >= 2) {
     const first = parties[sorted[0]];
     const second = parties[sorted[1]];
     const gap = first.seats - second.seats;
     if (gap > 20) trend = `📈 ${first.short} has a commanding lead of ${gap} seats.`;
     else if (gap > 10) trend = `📈 ${first.short} pulling ahead by ${gap} seats.`;
-    else if (gap <= 5 && counted > 20) trend = `⚡ Extremely tight — only ${gap} seats between the top two.`;
+    else if (gap <= 5 && counted > 20) trend = `⚡ Extremely tight race — only ${gap} seats between top two!`;
   }
 
   return { meaning, closest, trend };
@@ -133,7 +135,7 @@ function renderCards(parties) {
 
   keys.forEach(key => {
     const p = parties[key];
-    const meta = PARTY_META[key] || { color: '#888', full: p.name, alliance: '' };
+    const meta = PARTY_META[key] || { color: '#888', glow: 'rgba(136,136,136,0.2)', full: p.name, alliance: '' };
     const pct = Math.min((p.seats / MAJORITY) * 100, 100);
     const needsText = key === 'others' ? `${p.seats} seats counted` : getNeedsText(p.seats);
     const isLeader = p.seats === maxSeats && p.seats > 0;
@@ -143,75 +145,78 @@ function renderCards(parties) {
     if (!card) {
       card = document.createElement('div');
       card.id = `card-${key}`;
-      card.className = 'card';
-      card.style.setProperty('--card-color', meta.color);
+      card.className = 'card' + (isLeader ? ' card-leading' : '');
+      card.style.cssText = `--card-color:${meta.color};--card-glow:${meta.glow};border-top:2px solid ${meta.color};`;
       card.innerHTML = `
+        <div class="card-glow-bg" style="background:${meta.glow}"></div>
         <div class="card-top-row">
           <div>
             <div class="card-party-tag" style="color:${meta.color}">${p.short}</div>
             <div class="card-party-name">${meta.full}</div>
           </div>
-          <div class="card-alliance">${meta.alliance}</div>
+          <div class="card-alliance" style="border-color:${meta.color};color:${meta.color}">${meta.alliance}</div>
         </div>
-        <div class="card-seats" id="seats-${key}" style="color:${meta.color}">0</div>
-        <div class="card-label">Seats Leading + Won</div>
+        <div class="card-seats" id="seats-${key}" style="color:${meta.color};text-shadow:0 0 40px ${meta.glow}">0</div>
+        <div class="card-label">SEATS LEADING + WON</div>
         <div class="card-bar-track">
-          <div class="card-bar" id="bar-${key}" style="width:0%"></div>
+          <div class="card-bar" id="bar-${key}" style="background:${meta.color};box-shadow:0 0 12px ${meta.color};width:0%"></div>
         </div>
-        <div class="card-needs" id="needs-${key}">${needsText}</div>
+        <div class="card-needs ${p.seats >= MAJORITY ? 'achieved' : ''}" id="needs-${key}">${needsText}</div>
       `;
       section.appendChild(card);
     }
 
     const seatsEl = document.getElementById(`seats-${key}`);
-    const barEl   = document.getElementById(`bar-${key}`);
+    const barEl = document.getElementById(`bar-${key}`);
     const needsEl = document.getElementById(`needs-${key}`);
 
     if (seatsEl) animateCount(seatsEl, p.seats);
-    if (barEl)   barEl.style.width = pct + '%';
+    if (barEl) barEl.style.width = pct + '%';
     if (needsEl) {
       needsEl.textContent = needsText;
-      needsEl.className   = 'card-needs' + (p.seats >= MAJORITY ? ' achieved' : '');
+      needsEl.className = 'card-needs' + (p.seats >= MAJORITY ? ' achieved' : '');
     }
 
-    // Pulse flash on update
     if (prevSeats[key] !== undefined && prevSeats[key] !== p.seats) {
-      card.style.outline = `2px solid ${meta.color}`;
-      setTimeout(() => card.style.outline = '', 1200);
+      card.style.boxShadow = `0 0 40px ${meta.glow}, 0 0 80px ${meta.glow}`;
+      setTimeout(() => card.style.boxShadow = '', 1500);
     }
 
     card.className = 'card' + (isLeader ? ' card-leading' : '');
   });
 }
 
-// ── RENDER DONUT ──
+// ── RENDER DONUT CHART ──
 function renderDonut(parties) {
-  const svg    = document.getElementById('donut-svg');
+  const svg = document.getElementById('donut-svg');
   const legend = document.getElementById('donut-legend');
   if (!svg || !legend) return;
 
-  const keys  = Object.keys(parties);
+  const keys = Object.keys(parties);
   const total = keys.reduce((s, k) => s + parties[k].seats, 0);
-  const cx = 70, cy = 70, r = 52, strokeWidth = 18;
+  const cx = 70, cy = 70, r = 54, strokeWidth = 18;
   const circumference = 2 * Math.PI * r;
 
+  // Remove old segments (keep the base circle)
   svg.querySelectorAll('.donut-seg').forEach(el => el.remove());
+
   legend.innerHTML = '';
 
   if (total === 0) {
-    legend.innerHTML = `<div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--ink-3);letter-spacing:1px">No results yet</div>`;
+    legend.innerHTML = `<div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:1px">No results yet</div>`;
     return;
   }
 
-  let cumulative = 0;
+  let offset = 0;
+  // rotate start from top (-90deg = -circumference/4 offset)
+  const startOffset = circumference * 0.25;
+
   keys.forEach(key => {
-    const p    = parties[key];
+    const p = parties[key];
     const meta = PARTY_META[key] || { color: '#888' };
     const fraction = p.seats / total;
     const dash = fraction * circumference;
-    const gap  = circumference - dash;
-    // SVG arcs start at 3 o'clock; rotate to 12 o'clock
-    const offset = circumference * 0.25 - cumulative * circumference;
+    const gap = circumference - dash;
 
     const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
     circle.setAttribute('class', 'donut-seg');
@@ -222,16 +227,18 @@ function renderDonut(parties) {
     circle.setAttribute('stroke', meta.color);
     circle.setAttribute('stroke-width', strokeWidth);
     circle.setAttribute('stroke-dasharray', `${dash} ${gap}`);
-    circle.setAttribute('stroke-dashoffset', offset);
-    circle.style.transition = 'stroke-dasharray 1.4s cubic-bezier(0.4,0,0.2,1)';
+    circle.setAttribute('stroke-dashoffset', startOffset - offset * circumference);
+    circle.style.transition = 'stroke-dasharray 1.2s cubic-bezier(0.4,0,0.2,1)';
+    circle.style.filter = `drop-shadow(0 0 6px ${meta.color})`;
     svg.appendChild(circle);
 
-    cumulative += fraction;
+    offset += fraction;
 
-    const pct = Math.round(fraction * 100);
+    // Legend item
+    const pct = total > 0 ? Math.round(fraction * 100) : 0;
     legend.innerHTML += `
       <div class="legend-item">
-        <div class="legend-dot" style="background:${meta.color}"></div>
+        <div class="legend-dot" style="background:${meta.color};box-shadow:0 0 6px ${meta.color}"></div>
         <div class="legend-name">${p.short}</div>
         <div class="legend-val" style="color:${meta.color}">${p.seats}</div>
       </div>
@@ -239,28 +246,30 @@ function renderDonut(parties) {
   });
 }
 
-// ── RENDER ALLIANCES ──
+// ── RENDER ALLIANCE PANEL ──
 function renderAlliances(parties) {
   const container = document.getElementById('alliance-bars');
   if (!container) return;
+
   container.innerHTML = '';
 
-  Object.entries(ALLIANCES).forEach(([name, alliance]) => {
-    const total = alliance.keys.reduce((s, k) => s + (parties[k]?.seats || 0), 0);
-    const pct   = Math.min((total / TOTAL_SEATS) * 100, 100);
-    const won   = total >= MAJORITY;
+  Object.entries(ALLIANCES).forEach(([allianceName, alliance]) => {
+    const totalSeats = alliance.keys.reduce((sum, k) => sum + (parties[k]?.seats || 0), 0);
+    const pct = Math.min((totalSeats / TOTAL_SEATS) * 100, 100);
+    const majorityPct = (MAJORITY / TOTAL_SEATS) * 100;
+    const atMajority = totalSeats >= MAJORITY;
 
     container.innerHTML += `
       <div class="alliance-row">
         <div class="alliance-row-top">
-          <div class="alliance-name" style="color:${alliance.color}">${name}</div>
-          <div class="alliance-seats" style="color:${alliance.color}">${total}</div>
+          <div class="alliance-name" style="color:${alliance.color}">${allianceName}</div>
+          <div class="alliance-seats" style="color:${alliance.color};text-shadow:0 0 20px ${alliance.glow}">${totalSeats}</div>
         </div>
         <div class="alliance-track">
-          <div class="alliance-fill" style="width:${pct}%;background:${alliance.color}"></div>
+          <div class="alliance-fill" style="width:${pct}%;background:linear-gradient(90deg,${alliance.color},${alliance.color}88);box-shadow:0 0 12px ${alliance.color}66;"></div>
           <div class="majority-line-marker"></div>
         </div>
-        ${won ? `<div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--win);letter-spacing:2px;margin-top:4px">✅ MAJORITY ACHIEVED</div>` : ''}
+        ${atMajority ? `<div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--win);letter-spacing:2px;margin-top:4px">✅ MAJORITY ACHIEVED</div>` : ''}
       </div>
     `;
   });
@@ -280,7 +289,7 @@ function renderMajorityMeter(parties) {
       </div>
       <div class="meter-bars" id="meter-bars"></div>
     `;
-    const main       = document.querySelector('main');
+    const main = document.querySelector('main');
     const bottomGrid = document.querySelector('.bottom-grid');
     main.insertBefore(meter, bottomGrid);
   }
@@ -288,20 +297,19 @@ function renderMajorityMeter(parties) {
   const meterBars = document.getElementById('meter-bars');
   meterBars.innerHTML = '';
 
-  const keys = Object.keys(parties)
-    .filter(k => k !== 'others')
-    .sort((a, b) => parties[b].seats - parties[a].seats);
+  const keys = Object.keys(parties).filter(k => k !== 'others');
+  keys.sort((a, b) => parties[b].seats - parties[a].seats);
 
   keys.forEach(key => {
-    const p    = parties[key];
-    const meta = PARTY_META[key] || { color: '#888' };
-    const pct  = Math.min((p.seats / MAJORITY) * 100, 100);
+    const p = parties[key];
+    const meta = PARTY_META[key] || { color: '#888', glow: 'rgba(136,136,136,0.2)' };
+    const pct = Math.min((p.seats / MAJORITY) * 100, 100);
 
     meterBars.innerHTML += `
       <div class="meter-row">
         <div class="meter-party-name" style="color:${meta.color}">${p.short}</div>
         <div class="meter-track">
-          <div class="meter-fill" style="width:${pct}%;background:${meta.color}"></div>
+          <div class="meter-fill" style="width:${pct}%;background:linear-gradient(90deg,${meta.color},${meta.color}aa);box-shadow:0 0 15px ${meta.color}66"></div>
           <div class="meter-goal-line"></div>
         </div>
         <div class="meter-count" style="color:${meta.color}">${p.seats}</div>
@@ -321,10 +329,11 @@ function renderTicker(parties) {
     document.body.insertBefore(ticker, document.querySelector('footer'));
   }
 
-  const items = Object.keys(parties).map(key => {
-    const p    = parties[key];
+  const keys = Object.keys(parties);
+  const items = keys.map(key => {
+    const p = parties[key];
     const meta = PARTY_META[key] || { color: '#888' };
-    return `<span class="ticker-item"><span style="color:${meta.color};font-weight:700">${p.short}</span>&nbsp;${p.seats} seats</span><span class="ticker-sep"> · </span>`;
+    return `<span class="ticker-item"><span style="color:${meta.color};font-weight:700">${p.short}</span>&nbsp;<span style="color:#fff">${p.seats}</span> seats</span><span class="ticker-sep">·</span>`;
   }).join('');
 
   document.getElementById('ticker-inner').innerHTML = items + items;
@@ -342,20 +351,19 @@ function render(data) {
 
   const leader = getLeader(parties);
   if (leader) {
-    const meta   = PARTY_META[leader.key] || {};
+    const meta = PARTY_META[leader.key] || {};
     const leadEl = document.getElementById('leading-party');
     leadEl.textContent = leader.short;
-    leadEl.style.color = meta.color || '#fff';
-    document.getElementById('leading-sub').textContent =
-      `${leader.seats} seats · ${meta.full || ''}`;
+    leadEl.style.color = meta.color || 'var(--win)';
+    leadEl.style.textShadow = `0 0 40px ${meta.glow || 'transparent'}`;
+    document.getElementById('leading-sub').textContent = `${leader.seats} seats · ${meta.full || ''}`;
   }
 
   const insights = getInsights(parties, leader);
   document.getElementById('insight-meaning').textContent = insights.meaning;
   document.getElementById('insight-closest').textContent = insights.closest;
-  document.getElementById('insight-trend').textContent   = insights.trend;
-  document.getElementById('last-updated').textContent    =
-    'Updated ' + new Date().toLocaleTimeString();
+  document.getElementById('insight-trend').textContent = insights.trend;
+  document.getElementById('last-updated').textContent = '🕐 ' + new Date().toLocaleTimeString();
 
   prevSeats = {};
   Object.keys(parties).forEach(k => prevSeats[k] = parties[k].seats);
@@ -366,29 +374,31 @@ function render(data) {
 // ── FETCH ──
 async function fetchData() {
   try {
-    const res  = await fetch(`https://opensheet.elk.sh/1170HdchakPRIZO4URqot2jfAhtkorl1tP9-Tpq80Ia0/Sheet1`);
+    const res = await fetch(`https://opensheet.elk.sh/1170HdchakPRIZO4URqot2jfAhtkorl1tP9-Tpq80Ia0/Sheet1`);
     const rows = await res.json();
-    const data = { parties: {} };
+    const data = { last_updated: new Date().toLocaleTimeString(), parties: {} };
     rows.forEach(row => {
       const key = row.party.toLowerCase();
       data.parties[key] = {
-        name:  row.party,
+        name: row.party,
         short: row.party,
         seats: parseInt(row.seats) || 0,
-        won:   parseInt(row.won)   || 0,
+        won: parseInt(row.won) || 0
       };
     });
     render(data);
   } catch (err) {
     console.error('Fetch failed:', err);
-    document.getElementById('last-updated').textContent = '⚠ Update failed';
-    // Fallback skeleton so UI still shows
+    document.getElementById('last-updated').textContent = '⚠️ Update failed';
+
+    // Fallback demo data so the UI still renders
     render({
+      last_updated: new Date().toLocaleTimeString(),
       parties: {
-        tvk:    { name:'TVK',    short:'TVK',    seats:0, won:0 },
-        dmk:    { name:'DMK',    short:'DMK',    seats:0, won:0 },
-        admk:   { name:'ADMK',   short:'ADMK',   seats:0, won:0 },
-        others: { name:'Others', short:'Others', seats:0, won:0 },
+        tvk:    { name: 'TVK',    short: 'TVK',    seats: 0, won: 0 },
+        dmk:    { name: 'DMK',    short: 'DMK',    seats: 0, won: 0 },
+        admk:   { name: 'ADMK',   short: 'ADMK',   seats: 0, won: 0 },
+        others: { name: 'Others', short: 'Others', seats: 0, won: 0 },
       }
     });
   }

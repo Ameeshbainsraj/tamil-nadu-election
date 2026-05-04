@@ -2,13 +2,20 @@
 const MAJORITY = 118;
 const TOTAL_SEATS = 234;
 const REFRESH_INTERVAL = 12000;
-const REAL_SHEET_ID = '1170HdchakPRIZO4URqot2jfAhtkorl1tP9-Tpq80Ia0';
 
 const PARTY_META = {
   tvk:    { color: '#ff6b1a', glow: 'rgba(255,107,26,0.3)',  full: 'Tamil Vettri Kazhagam',       alliance: 'TVK' },
   dmk:    { color: '#3b9eff', glow: 'rgba(59,158,255,0.3)',  full: 'Dravida Munnetra Kazhagam',   alliance: 'DMK+' },
   admk:   { color: '#ff3d8a', glow: 'rgba(255,61,138,0.3)',  full: 'All India Anna DMK',          alliance: 'ADMK+' },
   others: { color: '#a855f7', glow: 'rgba(168,85,247,0.3)',  full: 'Others & Independents',       alliance: 'Others' },
+};
+
+// Alliance groupings: which party keys belong to which alliance
+const ALLIANCES = {
+  'TVK Alliance':  { keys: ['tvk'],          color: '#ff6b1a', glow: 'rgba(255,107,26,0.3)' },
+  'DMK+ Alliance': { keys: ['dmk'],          color: '#3b9eff', glow: 'rgba(59,158,255,0.3)' },
+  'ADMK+':         { keys: ['admk'],         color: '#ff3d8a', glow: 'rgba(255,61,138,0.3)' },
+  'Others':        { keys: ['others'],       color: '#a855f7', glow: 'rgba(168,85,247,0.3)' },
 };
 
 let prevSeats = {};
@@ -43,10 +50,12 @@ function checkVictory(parties) {
     if (p.seats >= MAJORITY && !victoryShown) {
       victoryShown = true;
       const meta = PARTY_META[key] || {};
-      document.getElementById('victory-party-name').textContent = p.short;
-      document.getElementById('victory-party-name').style.color = meta.color || '#fff';
-      document.getElementById('victory-party-name').style.textShadow = `0 0 80px ${meta.glow}`;
+      const nameEl = document.getElementById('victory-party-name');
+      nameEl.textContent = p.short;
+      nameEl.style.color = meta.color || '#fff';
+      nameEl.style.textShadow = `0 0 80px ${meta.glow}`;
       document.getElementById('victory-seat-count').textContent = p.seats;
+      document.getElementById('victory-seat-count').style.color = meta.color || '#fff';
       document.getElementById('victory-overlay').classList.remove('hidden');
       launchConfetti(meta.color || '#ffffff');
     }
@@ -122,18 +131,18 @@ function getInsights(parties, leader) {
 function renderCards(parties) {
   const section = document.getElementById('party-cards');
   const keys = Object.keys(parties);
+  const maxSeats = Math.max(...keys.map(k => parties[k].seats));
 
   keys.forEach(key => {
     const p = parties[key];
     const meta = PARTY_META[key] || { color: '#888', glow: 'rgba(136,136,136,0.2)', full: p.name, alliance: '' };
     const pct = Math.min((p.seats / MAJORITY) * 100, 100);
-    const needsText = key === 'others' ? `${p.seats} seats` : getNeedsText(p.seats);
-    const isLeader = p.seats === Math.max(...keys.map(k => parties[k].seats));
+    const needsText = key === 'others' ? `${p.seats} seats counted` : getNeedsText(p.seats);
+    const isLeader = p.seats === maxSeats && p.seats > 0;
 
     let card = document.getElementById(`card-${key}`);
 
     if (!card) {
-      // Create card
       card = document.createElement('div');
       card.id = `card-${key}`;
       card.className = 'card' + (isLeader ? ' card-leading' : '');
@@ -157,7 +166,6 @@ function renderCards(parties) {
       section.appendChild(card);
     }
 
-    // Update existing card
     const seatsEl = document.getElementById(`seats-${key}`);
     const barEl = document.getElementById(`bar-${key}`);
     const needsEl = document.getElementById(`needs-${key}`);
@@ -169,13 +177,101 @@ function renderCards(parties) {
       needsEl.className = 'card-needs' + (p.seats >= MAJORITY ? ' achieved' : '');
     }
 
-    // Pulse card if updated
     if (prevSeats[key] !== undefined && prevSeats[key] !== p.seats) {
       card.style.boxShadow = `0 0 40px ${meta.glow}, 0 0 80px ${meta.glow}`;
       setTimeout(() => card.style.boxShadow = '', 1500);
     }
 
     card.className = 'card' + (isLeader ? ' card-leading' : '');
+  });
+}
+
+// ── RENDER DONUT CHART ──
+function renderDonut(parties) {
+  const svg = document.getElementById('donut-svg');
+  const legend = document.getElementById('donut-legend');
+  if (!svg || !legend) return;
+
+  const keys = Object.keys(parties);
+  const total = keys.reduce((s, k) => s + parties[k].seats, 0);
+  const cx = 70, cy = 70, r = 54, strokeWidth = 18;
+  const circumference = 2 * Math.PI * r;
+
+  // Remove old segments (keep the base circle)
+  svg.querySelectorAll('.donut-seg').forEach(el => el.remove());
+
+  legend.innerHTML = '';
+
+  if (total === 0) {
+    legend.innerHTML = `<div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:1px">No results yet</div>`;
+    return;
+  }
+
+  let offset = 0;
+  // rotate start from top (-90deg = -circumference/4 offset)
+  const startOffset = circumference * 0.25;
+
+  keys.forEach(key => {
+    const p = parties[key];
+    const meta = PARTY_META[key] || { color: '#888' };
+    const fraction = p.seats / total;
+    const dash = fraction * circumference;
+    const gap = circumference - dash;
+
+    const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    circle.setAttribute('class', 'donut-seg');
+    circle.setAttribute('cx', cx);
+    circle.setAttribute('cy', cy);
+    circle.setAttribute('r', r);
+    circle.setAttribute('fill', 'none');
+    circle.setAttribute('stroke', meta.color);
+    circle.setAttribute('stroke-width', strokeWidth);
+    circle.setAttribute('stroke-dasharray', `${dash} ${gap}`);
+    circle.setAttribute('stroke-dashoffset', startOffset - offset * circumference);
+    circle.style.transition = 'stroke-dasharray 1.2s cubic-bezier(0.4,0,0.2,1)';
+    circle.style.filter = `drop-shadow(0 0 6px ${meta.color})`;
+    svg.appendChild(circle);
+
+    offset += fraction;
+
+    // Legend item
+    const pct = total > 0 ? Math.round(fraction * 100) : 0;
+    legend.innerHTML += `
+      <div class="legend-item">
+        <div class="legend-dot" style="background:${meta.color};box-shadow:0 0 6px ${meta.color}"></div>
+        <div class="legend-name">${p.short}</div>
+        <div class="legend-val" style="color:${meta.color}">${p.seats}</div>
+      </div>
+    `;
+  });
+}
+
+// ── RENDER ALLIANCE PANEL ──
+function renderAlliances(parties) {
+  const container = document.getElementById('alliance-bars');
+  if (!container) return;
+
+  container.innerHTML = '';
+
+  Object.entries(ALLIANCES).forEach(([allianceName, alliance]) => {
+    const totalSeats = alliance.keys.reduce((sum, k) => sum + (parties[k]?.seats || 0), 0);
+    const pct = Math.min((totalSeats / TOTAL_SEATS) * 100, 100);
+    const majorityPct = (MAJORITY / TOTAL_SEATS) * 100;
+    const atMajority = totalSeats >= MAJORITY;
+
+    container.innerHTML += `
+      <div class="alliance-row">
+        <div class="alliance-row-top">
+          <div class="alliance-name" style="color:${alliance.color}">${allianceName}</div>
+          <div class="alliance-seats" style="color:${alliance.color};text-shadow:0 0 20px ${alliance.glow}">${totalSeats}</div>
+        </div>
+        <div class="alliance-track">
+          <div class="alliance-fill" style="width:${pct}%;background:linear-gradient(90deg,${alliance.color},${alliance.color}88);box-shadow:0 0 12px ${alliance.color}66;"></div>
+          <div class="majority-line-marker"></div>
+        </div>
+        ${atMajority ? `<div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--win);letter-spacing:2px;margin-top:4px">✅ MAJORITY ACHIEVED</div>` : ''}
+      </div>
+    `;
   });
 }
 
@@ -187,9 +283,9 @@ function renderMajorityMeter(parties) {
     meter.id = 'majority-meter-section';
     meter.className = 'majority-meter-section';
     meter.innerHTML = `
-      <div class="meter-label">
-        <span>RACE TO MAJORITY</span>
-        <span class="meter-sub">First to 118 wins</span>
+      <div class="meter-header">
+        <div class="meter-header-label">Race to Majority</div>
+        <div class="meter-header-sub">First to 118 wins</div>
       </div>
       <div class="meter-bars" id="meter-bars"></div>
     `;
@@ -214,7 +310,7 @@ function renderMajorityMeter(parties) {
         <div class="meter-party-name" style="color:${meta.color}">${p.short}</div>
         <div class="meter-track">
           <div class="meter-fill" style="width:${pct}%;background:linear-gradient(90deg,${meta.color},${meta.color}aa);box-shadow:0 0 15px ${meta.color}66"></div>
-          <div class="meter-mark"></div>
+          <div class="meter-goal-line"></div>
         </div>
         <div class="meter-count" style="color:${meta.color}">${p.seats}</div>
       </div>
@@ -237,7 +333,7 @@ function renderTicker(parties) {
   const items = keys.map(key => {
     const p = parties[key];
     const meta = PARTY_META[key] || { color: '#888' };
-    return `<span class="ticker-item"><span style="color:${meta.color};font-weight:700">${p.short}</span> <span style="color:#fff">${p.seats}</span> seats</span><span class="ticker-sep">·</span>`;
+    return `<span class="ticker-item"><span style="color:${meta.color};font-weight:700">${p.short}</span>&nbsp;<span style="color:#fff">${p.seats}</span> seats</span><span class="ticker-sep">·</span>`;
   }).join('');
 
   document.getElementById('ticker-inner').innerHTML = items + items;
@@ -248,15 +344,18 @@ function render(data) {
   const { parties } = data;
 
   renderCards(parties);
+  renderDonut(parties);
+  renderAlliances(parties);
   renderMajorityMeter(parties);
   renderTicker(parties);
 
   const leader = getLeader(parties);
   if (leader) {
     const meta = PARTY_META[leader.key] || {};
-    document.getElementById('leading-party').textContent = leader.short;
-    document.getElementById('leading-party').style.color = meta.color || 'var(--win)';
-    document.getElementById('leading-party').style.textShadow = `0 0 40px ${meta.glow || 'transparent'}`;
+    const leadEl = document.getElementById('leading-party');
+    leadEl.textContent = leader.short;
+    leadEl.style.color = meta.color || 'var(--win)';
+    leadEl.style.textShadow = `0 0 40px ${meta.glow || 'transparent'}`;
     document.getElementById('leading-sub').textContent = `${leader.seats} seats · ${meta.full || ''}`;
   }
 
@@ -281,7 +380,8 @@ async function fetchData() {
     rows.forEach(row => {
       const key = row.party.toLowerCase();
       data.parties[key] = {
-        name: row.party, short: row.party,
+        name: row.party,
+        short: row.party,
         seats: parseInt(row.seats) || 0,
         won: parseInt(row.won) || 0
       };
@@ -290,6 +390,17 @@ async function fetchData() {
   } catch (err) {
     console.error('Fetch failed:', err);
     document.getElementById('last-updated').textContent = '⚠️ Update failed';
+
+    // Fallback demo data so the UI still renders
+    render({
+      last_updated: new Date().toLocaleTimeString(),
+      parties: {
+        tvk:    { name: 'TVK',    short: 'TVK',    seats: 0, won: 0 },
+        dmk:    { name: 'DMK',    short: 'DMK',    seats: 0, won: 0 },
+        admk:   { name: 'ADMK',   short: 'ADMK',   seats: 0, won: 0 },
+        others: { name: 'Others', short: 'Others', seats: 0, won: 0 },
+      }
+    });
   }
 }
 

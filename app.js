@@ -33,11 +33,21 @@ function parseCSV(text) {
 }
 
 async function fetchFromSheets() {
-  const res = await fetch(SHEET_URL + '&_=' + Date.now(), { cache:'no-store' });
+  const res = await fetch('data.json?_=' + Date.now(), { cache: 'no-store' });
   if (!res.ok) throw new Error('HTTP ' + res.status);
-  const p = parseCSV(await res.text());
-  if (!p) throw new Error('Parse failed');
-  return p;
+  const json = await res.json();
+  const raw = json.results;
+  const parties = {};
+  ORDER.forEach(k => {
+    const d = raw[k] || {};
+    parties[k] = {
+      short: { tvk:'TVK', dmk:'DMK+', admk:'ADMK', ntk:'NTK', others:'OTH' }[k],
+      seats: (d.won || 0) + (d.leading || 0),
+      won: d.won || 0,
+      leading: d.leading || 0
+    };
+  });
+  return parties;
 }
 
 function animateCount(el, newVal) {

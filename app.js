@@ -26,17 +26,7 @@ const ALLIANCES = [
   { name: 'Others',        keys: ['others'], color: '#7b7b8a' },
 ];
 
-/* Sample constituency data — replaced by API when available */
-const SAMPLE_CON = [
-  { con: 'Chennai Central',  cand: 'A. Murugan',     party: 'dmk',  votes: 48230, margin: 4200,  status: 'LEADING' },
-  { con: 'Coimbatore South', cand: 'K. Selvam',      party: 'admk', votes: 41800, margin: 1800,  status: 'LEADING' },
-  { con: 'Madurai East',     cand: 'P. Vijay Baskar', party: 'tvk', votes: 36100, margin: 3100,  status: 'LEADING' },
-  { con: 'Tirunelveli',      cand: 'S. Ramasubbu',   party: 'dmk',  votes: 52400, margin: 6700,  status: 'WON'     },
-  { con: 'Salem West',       cand: 'R. Gopal',       party: 'admk', votes: 38900, margin: 2300,  status: 'LEADING' },
-  { con: 'Trichy West',      cand: 'M. Anbazhagan',  party: 'dmk',  votes: 44100, margin: 5400,  status: 'LEADING' },
-  { con: 'Vellore',          cand: 'T. Dharmaraj',   party: 'tvk',  votes: 29700, margin: 900,   status: 'LEADING' },
-  { con: 'Erode East',       cand: 'L. Murugesan',   party: 'ntk',  votes: 22300, margin: 1100,  status: 'LEADING' },
-];
+
 
 /* ── CONFETTI ── */
 function launchConfetti(color) {
@@ -260,34 +250,7 @@ function renderQuickView(parties) {
   if (ct) ct.textContent = new Date().toLocaleTimeString('en-IN', { hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:true }) + ' IST';
 }
 
-/* ── RENDER CONSTITUENCY TABLE ── */
-function renderConstituencies(rows) {
-  const tbody = document.getElementById('con-tbody');
-  if (!tbody) return;
-  tbody.innerHTML = '';
 
-  const statusStyles = {
-    'WON':     { cls: 'status-won',     bg: 'rgba(67,160,71,.2)',  col: '#81c784' },
-    'LEADING': { cls: 'status-leading', bg: 'rgba(249,168,37,.12)',col: '#f9a825' },
-    'BEHIND':  { cls: 'status-behind',  bg: 'rgba(229,57,53,.15)', col: '#ef9a9a' },
-    'TRAILING':{ cls: 'status-trailing',bg: 'rgba(255,255,255,.05)',col:'#666' },
-  };
-
-  rows.forEach(r => {
-    const meta = PARTY_META[r.party] || { bar: '#888' };
-    const ss   = statusStyles[r.status] || statusStyles['TRAILING'];
-    const tr   = document.createElement('tr');
-    tr.innerHTML = `
-      <td class="con-name">${r.con}</td>
-      <td class="con-candidate">${r.cand}</td>
-      <td><span class="con-party-dot" style="background:${meta.bar}"></span>${(r.party||'').toUpperCase()}</td>
-      <td class="con-votes">${(r.votes||0).toLocaleString()}</td>
-      <td class="con-margin">+${(r.margin||0).toLocaleString()}</td>
-      <td><span class="con-status-badge" style="background:${ss.bg};color:${ss.col}">${r.status}</span></td>
-    `;
-    tbody.appendChild(tr);
-  });
-}
 
 /* ── HEADER STATS ── */
 function renderHeaderStats(parties) {
@@ -311,7 +274,7 @@ function render(data) {
   renderTicker(parties);
   renderQuickView(parties);
   renderHeaderStats(parties);
-  renderConstituencies(SAMPLE_CON);
+
 
   document.getElementById('last-updated').textContent =
     'Updated ' + new Date().toLocaleTimeString('en-IN', { hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:true });

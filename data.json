@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-05-04T14:56:40.174949",
+  "last_updated": "2026-05-04T14:58:55.734208",
   "results": {
     "tvk": {
       "seats": 107,
@@ -8,13 +8,13 @@
     },
     "dmk": {
       "seats": 74,
-      "won": 74,
-      "leading": 0
+      "won": 55,
+      "leading": 19
     },
     "admk": {
       "seats": 53,
-      "won": 53,
-      "leading": 0
+      "won": 47,
+      "leading": 6
     },
     "ntk": {
       "seats": 0,

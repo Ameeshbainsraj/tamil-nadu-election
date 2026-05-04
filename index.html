@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TN26 · Tamil Nadu Election 2026</title>
+<title>TN26 · Tamil Nadu Election 2026 · Live</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -15,7 +15,7 @@
 <div id="victory-overlay" class="hidden">
   <div class="confetti-container" id="confetti"></div>
   <div class="victory-inner">
-    <div class="victory-badge">⚡ Winner Declared ⚡</div>
+    <div class="victory-badge">⚡ WINNER DECLARED ⚡</div>
     <div id="victory-party-name">TVK</div>
     <div class="victory-seats-label">seats won &amp; leading</div>
     <div id="victory-seat-count">0</div>
@@ -24,152 +24,167 @@
   </div>
 </div>
 
-<!-- HEADER -->
-<header>
-  <div class="header-inner">
-    <div class="header-left">
-      <span class="tn-badge">TN26</span>
-      <span class="header-brand">Tamil Nadu Assembly Election 2026</span>
-    </div>
-    <div class="header-center">
-      <div class="hstat">
-        <span class="hstat-label">Counting</span>
-        <span class="hstat-num" id="h-counting">0</span>
-        <span class="hstat-sub">of 234 seats</span>
-      </div>
-      <div class="hstat-div"></div>
-      <div class="hstat">
-        <span class="hstat-label">Won / Leading</span>
-        <span class="hstat-num" id="h-declared">0</span>
-        <span class="hstat-sub">Total Declared</span>
-      </div>
-      <div class="hstat-div"></div>
-      <div class="hstat">
-        <span class="hstat-label">Majority</span>
-        <span class="hstat-num gold">118</span>
-        <span class="hstat-sub">Seats needed</span>
-      </div>
-    </div>
-    <div class="header-right">
-      <div class="live-pill"><span class="live-dot"></span>Live Results</div>
-      <div class="update-text" id="update-time">Updated —</div>
-    </div>
+<!-- SIDEBAR NAV -->
+<nav class="sidebar-nav">
+  <div class="nav-logo">
+    <span class="nav-logo-box">TN</span>
   </div>
-</header>
-
-<!-- TICKER -->
-<div class="ticker-bar">
-  <div class="ticker-label">LIVE</div>
-  <div class="ticker-scroll-wrap">
-    <div class="ticker-scroll" id="ticker-content">
-      <span class="ticker-item"><span class="t-tvk">TVK</span> · 0</span>
-      <span class="ticker-item"><span class="t-dmk">DMK+</span> · 0</span>
-      <span class="ticker-item"><span class="t-admk">ADMK+</span> · 0</span>
-      <span class="ticker-item"><span class="t-ntk">NTK</span> · 0</span>
-      <span class="ticker-item"><span class="t-oth">OTHERS</span> · 0</span>
-    </div>
+  <div class="nav-items">
+    <button class="nav-item active" title="Dashboard">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+    </button>
+    <button class="nav-item" title="Stats">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+    </button>
+    <button class="nav-item" title="Alliance">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+    </button>
+    <button class="nav-item" title="Settings">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+    </button>
   </div>
-</div>
+  <div class="nav-bottom">
+    <div class="live-dot-nav"></div>
+  </div>
+</nav>
 
-<!-- MAIN LAYOUT -->
-<div class="app-body">
+<!-- MAIN WRAPPER -->
+<div class="main-wrapper">
 
-  <!-- SIDEBAR -->
-  <aside class="sidebar">
-    <!-- Gauge -->
-    <div class="sidebar-section">
-      <div class="sec-title">Seat Tally</div>
-      <div class="gauge-wrap">
-        <svg width="190" height="105" viewBox="0 0 190 105" fill="none" aria-label="Seat tally gauge">
-          <path d="M 15 100 A 80 80 0 0 1 175 100" stroke="rgba(255,255,255,0.06)" stroke-width="18" stroke-linecap="round" fill="none"/>
-          <path id="g-dmk" d="M 15 100 A 80 80 0 0 1 175 100" stroke="#e8423f" stroke-width="18" stroke-linecap="round" fill="none" stroke-dasharray="0 251" stroke-dashoffset="0"/>
-          <path id="g-admk" d="M 15 100 A 80 80 0 0 1 175 100" stroke="#3dab48" stroke-width="18" stroke-linecap="round" fill="none" stroke-dasharray="0 251" stroke-dashoffset="0"/>
-          <path id="g-tvk" d="M 15 100 A 80 80 0 0 1 175 100" stroke="#c8f53f" stroke-width="18" stroke-linecap="round" fill="none" stroke-dasharray="0 251" stroke-dashoffset="0"/>
-          <path id="g-ntk" d="M 15 100 A 80 80 0 0 1 175 100" stroke="#f06c2a" stroke-width="18" stroke-linecap="round" fill="none" stroke-dasharray="0 251" stroke-dashoffset="0"/>
-          <text x="95" y="86" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-size="28" font-weight="800" fill="white" id="gauge-total">0</text>
-          <text x="95" y="100" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="7" fill="#3a3f4a" letter-spacing="1">/ 234 SEATS</text>
-        </svg>
-        <div class="magic-row">
-          <span class="magic-label">Magic Number</span>
-          <span class="magic-num">118</span>
+  <!-- TOP BAR -->
+  <header class="topbar">
+    <div class="topbar-left">
+      <div class="topbar-title">Tamil Nadu Elections 2026</div>
+      <div class="topbar-sub">Live results · Updates every 12s</div>
+    </div>
+    <div class="topbar-center">
+      <div class="ticker-wrap">
+        <div class="ticker-scroll" id="ticker-content">
+          <span class="t-item"><span class="t-tvk">TVK</span> · 0</span>
+          <span class="t-item"><span class="t-dmk">DMK+</span> · 0</span>
+          <span class="t-item"><span class="t-admk">ADMK+</span> · 0</span>
+          <span class="t-item"><span class="t-ntk">NTK</span> · 0</span>
+          <span class="t-item"><span class="t-oth">OTH</span> · 0</span>
+          <span class="t-sep">—</span>
+          <span class="t-item"><span class="t-tvk">TVK</span> · 0</span>
+          <span class="t-item"><span class="t-dmk">DMK+</span> · 0</span>
+          <span class="t-item"><span class="t-admk">ADMK+</span> · 0</span>
+          <span class="t-item"><span class="t-ntk">NTK</span> · 0</span>
+          <span class="t-item"><span class="t-oth">OTH</span> · 0</span>
         </div>
       </div>
     </div>
+    <div class="topbar-right">
+      <div class="live-pill"><span class="live-dot"></span>LIVE</div>
+      <div class="update-text" id="update-time">—</div>
+    </div>
+  </header>
 
-    <!-- Alliance standings -->
-    <div class="sidebar-section">
-      <div class="sec-title">Alliance Standings</div>
-      <div id="alliance-sb"></div>
+  <!-- DASHBOARD GRID -->
+  <div class="dashboard">
+
+    <!-- ROW 1: Header stats -->
+    <div class="stats-row">
+      <div class="stat-card" id="sc-counting">
+        <div class="stat-label">Seats Counting</div>
+        <div class="stat-num" id="h-counting">0</div>
+        <div class="stat-sub">of 234 total</div>
+      </div>
+      <div class="stat-card" id="sc-declared">
+        <div class="stat-label">Won / Leading</div>
+        <div class="stat-num" id="h-declared">0</div>
+        <div class="stat-sub">Total declared</div>
+      </div>
+      <div class="stat-card accent">
+        <div class="stat-label">Majority Mark</div>
+        <div class="stat-num lime">118</div>
+        <div class="stat-sub">Seats needed</div>
+      </div>
+      <div class="stat-card" id="sc-pct">
+        <div class="stat-label">Counted</div>
+        <div class="stat-num" id="h-pct">0%</div>
+        <div class="stat-sub">of all seats</div>
+      </div>
     </div>
 
-    <!-- Party table -->
-    <div class="sidebar-section">
-      <div class="party-table-head">
-        <span>Party</span><span>Won</span><span>Leading</span><span>Total</span>
-      </div>
-      <div id="party-table"></div>
-    </div>
-  </aside>
-
-  <!-- MAIN -->
-  <main>
-
-    <!-- Party Scorecards -->
-    <div class="section-label">Party Scorecards</div>
-    <div class="party-cards" id="party-cards"></div>
-
-    <!-- Race + Donut Row -->
-    <div class="mid-row">
-
-      <!-- Race to Majority -->
-      <div class="panel race-panel">
-        <div class="panel-title">Race to 118</div>
-        <div class="race-bars" id="race-bars"></div>
+    <!-- ROW 2: Party cards + Donut -->
+    <div class="row2">
+      <div class="panel cards-panel">
+        <div class="panel-header">
+          <span class="panel-title">Party Scorecards</span>
+          <span class="panel-badge" id="last-updated">—</span>
+        </div>
+        <div class="party-cards" id="party-cards"></div>
       </div>
 
-      <!-- Donut -->
       <div class="panel donut-panel">
-        <div class="panel-title">Seat Share</div>
+        <div class="panel-header">
+          <span class="panel-title">Seat Share</span>
+        </div>
         <div class="donut-inner">
           <div class="donut-chart-wrap">
-            <canvas id="donut-canvas" width="130" height="130"></canvas>
-            <div class="donut-center-label">
-              <span id="donut-center-num">0</span>
-              <span class="donut-center-sub">declared</span>
+            <canvas id="donut-canvas" width="140" height="140"></canvas>
+            <div class="donut-center">
+              <span id="donut-num">0</span>
+              <span class="donut-sub">declared</span>
             </div>
           </div>
           <div class="donut-legend" id="donut-legend">
-            <div class="legend-empty">No results yet</div>
+            <div class="legend-empty">Awaiting results</div>
           </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ROW 3: Race to Majority + Alliance + Insight -->
+    <div class="row3">
+
+      <div class="panel race-panel">
+        <div class="panel-header">
+          <span class="panel-title">Race to 118</span>
+          <span class="panel-badge">Majority tracker</span>
+        </div>
+        <div class="race-bars" id="race-bars"></div>
+      </div>
+
+      <div class="panel alliance-panel">
+        <div class="panel-header">
+          <span class="panel-title">Alliance Standings</span>
+        </div>
+        <div id="alliance-sb"></div>
+      </div>
+
+      <div class="panel insight-panel">
+        <div class="panel-header">
+          <span class="panel-title">Live Insight</span>
+          <span class="live-indicator"><span class="live-dot sm"></span>Auto</span>
+        </div>
+        <div id="insight-lines">
+          <div class="insight-line"><span class="i-icon">📊</span><span>Counting has just begun.</span></div>
+          <div class="insight-line"><span class="i-icon">🏁</span><span>No clear leader yet.</span></div>
+          <div class="insight-line"><span class="i-icon">📈</span><span>Too early to call.</span></div>
         </div>
       </div>
 
     </div>
 
-    <!-- Live Insight -->
-    <div class="panel insight-panel">
-      <div class="panel-title">Live Insight</div>
-      <div id="insight-lines">
-        <div class="insight-line"><span class="insight-icon">📊</span><span>Counting has just begun.</span></div>
-        <div class="insight-line"><span class="insight-icon">🏁</span><span>No clear leader yet.</span></div>
-        <div class="insight-line"><span class="insight-icon">📈</span><span>Too early to call.</span></div>
+    <!-- QUICKVIEW -->
+    <div class="quickview-bar">
+      <span class="qv-label">Quick View</span>
+      <div class="qv-items">
+        <div class="qv-item"><span class="qv-dot" style="background:#5c6bc0"></span>DMK+ <span class="qv-num" id="qv-dmk">0</span></div>
+        <div class="qv-item"><span class="qv-dot" style="background:#3dab48"></span>ADMK+ <span class="qv-num" id="qv-admk">0</span></div>
+        <div class="qv-item"><span class="qv-dot" style="background:#c8f53f"></span>TVK <span class="qv-num" id="qv-tvk">0</span></div>
+        <div class="qv-item"><span class="qv-dot" style="background:#f06c2a"></span>NTK <span class="qv-num" id="qv-ntk">0</span></div>
+        <div class="qv-item"><span class="qv-dot" style="background:#6e7485"></span>OTH <span class="qv-num" id="qv-oth">0</span></div>
+      </div>
+      <div class="qv-right">
+        <span class="data-source">📡 Google Sheets</span>
+        <span class="qv-time" id="qv-time">—</span>
       </div>
     </div>
 
-  </main>
-</div>
-
-<!-- QUICKVIEW BAR -->
-<div class="quickview-bar">
-  <span class="qv-label">Quick View</span>
-  <div class="qv-items">
-    <div class="qv-item"><span class="qv-dot" style="background:#e8423f"></span>DMK+ <span class="qv-num" id="qv-dmk">0</span></div>
-    <div class="qv-item"><span class="qv-dot" style="background:#3dab48"></span>ADMK+ <span class="qv-num" id="qv-admk">0</span></div>
-    <div class="qv-item"><span class="qv-dot" style="background:#c8f53f"></span>TVK <span class="qv-num" id="qv-tvk">0</span></div>
-    <div class="qv-item"><span class="qv-dot" style="background:#f06c2a"></span>NTK <span class="qv-num" id="qv-ntk">0</span></div>
-    <div class="qv-item"><span class="qv-dot" style="background:#6e7485"></span>OTH <span class="qv-num" id="qv-oth">0</span></div>
   </div>
-  <div class="qv-time" id="qv-time">—</div>
 </div>
 
 <script src="app.js"></script>

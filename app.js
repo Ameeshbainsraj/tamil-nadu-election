@@ -1,13 +1,44 @@
 // ── CONFIG ──
 const MAJORITY = 118;
 const TOTAL_SEATS = 234;
-const REFRESH_INTERVAL = 12000; // 12 seconds
+const REFRESH_INTERVAL = 12000;
+
+const SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSa1i5BKO3-c2Lm3Gxcc9XLo7qeMhEFKzZtlnXt84Hb03W8wu7f91LvsKs7brLBK07K9t6YBwh2AZL5/pub?gid=0&single=true&output=csv';
+
+// ── PARSE CSV ──
+function parseCSV(text) {
+  const lines = text.trim().split('\n');
+  const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
+  const rows = [];
+  for (let i = 1; i < lines.length; i++) {
+    const values = lines[i].split(',').map(v => v.trim());
+    const obj = {};
+    headers.forEach((h, idx) => obj[h] = values[idx]);
+    rows.push(obj);
+  }
+  return rows;
+}
+
+// ── BUILD DATA OBJECT FROM SHEET ──
+function buildData(rows) {
+  const data = { parties: {}, last_updated: new Date().toLocaleTimeString() };
+  rows.forEach(row => {
+    const key = row.party.toLowerCase();
+    data.parties[key] = {
+      name: row.party,
+      short: row.party,
+      seats: parseInt(row.seats) || 0,
+      won: parseInt(row.won) || 0
+    };
+  });
+  return data;
+}
 
 // ── CONFETTI ──
 function launchConfetti() {
   const container = document.getElementById('confetti');
   container.innerHTML = '';
-  const colors = ['#f97316', '#3b82f6', '#22c55e', '#facc15', '#8b5cf6', '#ef4444'];
+  const colors = ['#f97316','#3b82f6','#22c55e','#facc15','#8b5cf6','#ef4444'];
   for (let i = 0; i < 120; i++) {
     const piece = document.createElement('div');
     piece.className = 'confetti-piece';
@@ -21,15 +52,20 @@ function launchConfetti() {
   }
 }
 
-// ── VICTORY OVERLAY ──
+// ── VICTORY ──
 let victoryShown = false;
-function showVictory(partyName, seats) {
-  if (victoryShown) return;
-  victoryShown = true;
-  document.getElementById('victory-party-name').textContent = partyName;
-  document.getElementById('victory-seat-count').textContent = seats;
-  document.getElementById('victory-overlay').classList.remove('hidden');
-  launchConfetti();
+function checkVictory(parties) {
+  for (const key in parties) {
+    if (key === 'others') continue;
+    const p = parties[key];
+    if (p.seats >= MAJORITY && !victoryShown) {
+      victoryShown = true;
+      document.getElementById('victory-party-name').textContent = p.short;
+      document.getElementById('victory-seat-count').textContent = p.seats;
+      document.getElementById('victory-overlay').classList.remove('hidden');
+      launchConfetti();
+    }
+  }
 }
 
 // ── NEEDS TEXT ──
@@ -43,7 +79,6 @@ function getLeader(parties) {
   let leader = null;
   let max = -1;
   for (const key in parties) {
-    if (key === 'others') continue;
     if (parties[key].seats > max) {
       max = parties[key].seats;
       leader = parties[key];
@@ -52,14 +87,13 @@ function getLeader(parties) {
   return leader;
 }
 
-// ── INSIGHT TEXT ──
+// ── INSIGHTS ──
 function getInsights(parties, leader) {
-  const tvk = parties.tvk.seats;
-  const dmk = parties.dmk.seats;
-  const counted = tvk + dmk + parties.others.seats;
+  const keys = Object.keys(parties);
+  const counted = keys.reduce((sum, k) => sum + parties[k].seats, 0);
   const pct = Math.round((counted / TOTAL_SEATS) * 100);
 
-  let meaning = `📊 ${pct}% of seats declared. Counting is ongoing.`;
+  let meaning = `📊 ${pct}% of seats declared. Counting ongoing.`;
   if (pct === 0) meaning = '📊 Counting has just begun. No results yet.';
   if (pct > 80) meaning = `📊 ${pct}% declared. Result becoming clear.`;
 
@@ -67,10 +101,18 @@ function getInsights(parties, leader) {
     ? `🏁 ${leader.short} is closest to majority with ${leader.seats} seats.`
     : '🏁 No clear leader yet.';
 
+  // Find top 2
+  const sorted = keys.sort((a, b) => parties[b].seats - parties[a].seats);
   let trend = '📈 Trend: Too early to call.';
-  if (tvk > dmk + 10) trend = '📈 Trend: TVK pulling ahead strongly.';
-  else if (dmk > tvk + 10) trend = '📈 Trend: DMK pulling ahead strongly.';
-  else if (Math.abs(tvk - dmk) <= 5 && counted > 20) trend = '📈 Trend: Very tight race between TVK & DMK.';
+  if (sorted.length >= 2) {
+    const first = parties[sorted[0]];
+    const second = parties[sorted[1]];
+    if (first.seats - second.seats > 10) {
+      trend = `📈 Trend: ${first.short} pulling ahead strongly.`;
+    } else if (Math.abs(first.seats - second.seats) <= 5 && counted > 20) {
+      trend = `📈 Trend: Very tight race between ${first.short} & ${second.short}.`;
+    }
+  }
 
   return { meaning, closest, trend };
 }
@@ -78,29 +120,52 @@ function getInsights(parties, leader) {
 // ── RENDER ──
 function render(data) {
   const { parties } = data;
-  const tvk = parties.tvk.seats;
-  const dmk = parties.dmk.seats;
-  const others = parties.others.seats;
 
-  // Seat numbers
-  document.getElementById('tvk-seats').textContent = tvk;
-  document.getElementById('dmk-seats').textContent = dmk;
-  document.getElementById('others-seats').textContent = others;
+  // Clear old cards
+  const cardsSection = document.querySelector('.party-cards');
+  cardsSection.innerHTML = '';
 
-  // Progress bars
-  document.getElementById('tvk-bar').style.width = Math.min((tvk / MAJORITY) * 100, 100) + '%';
-  document.getElementById('dmk-bar').style.width = Math.min((dmk / MAJORITY) * 100, 100) + '%';
-  document.getElementById('others-bar').style.width = Math.min((others / TOTAL_SEATS) * 100, 100) + '%';
+  const colorMap = {
+    tvk: '#f97316',
+    dmk: '#3b82f6',
+    admk: '#ec4899',
+    others: '#8b5cf6'
+  };
 
-  // Needs text
-  const tvkNeeds = document.getElementById('tvk-needs');
-  const dmkNeeds = document.getElementById('dmk-needs');
-  tvkNeeds.textContent = getNeedsText(tvk);
-  dmkNeeds.textContent = getNeedsText(dmk);
-  tvkNeeds.className = 'card-needs' + (tvk >= MAJORITY ? ' achieved' : '');
-  dmkNeeds.className = 'card-needs' + (dmk >= MAJORITY ? ' achieved' : '');
+  const defaultColors = ['#22c55e','#facc15','#06b6d4','#a855f7'];
+  let colorIdx = 0;
 
-  // Leading party
+  Object.keys(parties).forEach(key => {
+    const p = parties[key];
+    const color = colorMap[key] || defaultColors[colorIdx++ % defaultColors.length];
+    const pct = Math.min((p.seats / MAJORITY) * 100, 100);
+    const needsText = key === 'others'
+      ? `${p.seats} seats total`
+      : getNeedsText(p.seats);
+
+    cardsSection.innerHTML += `
+      <div class="card" style="--accent:${color}">
+        <div class="card-party-tag" style="color:${color}">${p.short}</div>
+        <div class="card-party-name">${p.name}</div>
+        <div class="card-seats" style="color:${color}">${p.seats}</div>
+        <div class="card-label">SEATS LEADING + WON</div>
+        <div class="card-bar-track">
+          <div class="card-bar" style="width:${pct}%;background:${color}"></div>
+        </div>
+        <div class="card-needs ${p.seats >= MAJORITY ? 'achieved' : ''}">${needsText}</div>
+      </div>`;
+  });
+
+  // Add top border accent via CSS var
+  document.querySelectorAll('.card').forEach(card => {
+    card.style.setProperty('--accent', card.style.getPropertyValue('--accent'));
+    const tag = card.querySelector('.card-party-tag');
+    if (tag) {
+      card.style.borderTop = `3px solid ${tag.style.color}`;
+    }
+  });
+
+  // Leading
   const leader = getLeader(parties);
   if (leader) {
     document.getElementById('leading-party').textContent = leader.short;
@@ -114,27 +179,27 @@ function render(data) {
   document.getElementById('insight-closest').textContent = insights.closest;
   document.getElementById('insight-trend').textContent = insights.trend;
 
-  // Last updated
-  document.getElementById('last-updated').textContent =
-    '🕐 ' + (data.last_updated || new Date().toLocaleTimeString());
+  // Timestamp
+  document.getElementById('last-updated').textContent = '🕐 ' + data.last_updated;
 
-  // Victory check
-  if (tvk >= MAJORITY) showVictory(parties.tvk.short, tvk);
-  if (dmk >= MAJORITY) showVictory(parties.dmk.short, dmk);
+  // Victory
+  checkVictory(parties);
 }
 
-// ── FETCH & LOOP ──
+// ── FETCH FROM GOOGLE SHEET ──
 async function fetchData() {
   try {
-    const res = await fetch('data.json?t=' + Date.now());
-    const data = await res.json();
+    const res = await fetch(SHEET_URL + '&t=' + Date.now());
+    const text = await res.text();
+    const rows = parseCSV(text);
+    const data = buildData(rows);
     render(data);
   } catch (err) {
-    console.error('Failed to load data.json:', err);
+    console.error('Sheet fetch failed:', err);
     document.getElementById('last-updated').textContent = '⚠️ Update failed';
   }
 }
 
-// Start
+// ── START ──
 fetchData();
 setInterval(fetchData, REFRESH_INTERVAL);

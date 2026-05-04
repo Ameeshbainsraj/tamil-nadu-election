@@ -31,7 +31,6 @@ function parseCSV(text) {
   ORDER.forEach(k => { if (!parties[k]) parties[k] = { short:k.toUpperCase(), seats:0, won:0, leading:0 }; });
   return parties;
 }
-
 async function fetchFromSheets() {
   const res = await fetch('data.json?_=' + Date.now(), { cache: 'no-store' });
   if (!res.ok) throw new Error('HTTP ' + res.status);
@@ -40,16 +39,18 @@ async function fetchFromSheets() {
   const parties = {};
   ORDER.forEach(k => {
     const d = raw[k] || {};
+    const won     = d.won     || 0;
+    const leading = d.leading || 0;
+    const seats   = d.seats   || (won + leading);
     parties[k] = {
       short: { tvk:'TVK', dmk:'DMK+', admk:'ADMK', ntk:'NTK', others:'OTH' }[k],
-      seats: (d.won || 0) + (d.leading || 0),
-      won: d.won || 0,
-      leading: d.leading || 0
+      seats:   seats,
+      won:     won,
+      leading: leading
     };
   });
   return parties;
 }
-
 function animateCount(el, newVal) {
   if (!el) return;
   const old = parseInt(el.textContent?.replace(/[^0-9]/g,'')) || 0;

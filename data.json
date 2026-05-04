@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-05-04T17:07:22.030591",
+  "last_updated": "2026-05-04T17:10:08.980335",
   "results": {
     "tvk": {
       "seats": 108,
@@ -22,8 +22,8 @@
       "leading": 0
     },
     "others": {
-      "seats": 0,
-      "won": 0,
+      "seats": 5,
+      "won": 5,
       "leading": 0
     }
   }

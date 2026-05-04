@@ -196,7 +196,8 @@ header {
 .app-body {
   display: grid;
   grid-template-columns: 280px 1fr;
-  min-height: calc(100vh - 84px - 36px);
+  height: calc(100vh - 56px - 28px - 36px);
+  overflow: hidden;
 }
 
 /* ──────────────────────────────────────────
@@ -210,6 +211,7 @@ header {
   flex-direction: column;
   gap: 20px;
   overflow-y: auto;
+  height: 100%;
 }
 .sidebar-section {
   border-bottom: 1px solid var(--border);
@@ -347,8 +349,9 @@ main {
   padding: 16px 20px;
   display: flex;
   flex-direction: column;
-  gap: 20px;
-  overflow: hidden;
+  gap: 16px;
+  overflow-y: auto;
+  height: 100%;
 }
 
 /* ──────────────────────────────────────────
@@ -362,20 +365,24 @@ main {
   text-transform: uppercase;
   padding-bottom: 10px;
   border-bottom: 1px solid var(--border);
+  margin-bottom: 2px;
 }
 .party-cards {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   gap: 10px;
+  flex-shrink: 0;
 }
 .card {
   background: var(--bg2);
   border: 1px solid var(--border);
   border-top: 3px solid var(--c-bar, #888);
   border-radius: 6px;
-  padding: 16px 14px;
+  padding: 18px 16px 16px;
   transition: box-shadow .2s, transform .2s;
   animation: cardIn .5s cubic-bezier(.22,1,.36,1) both;
+  display: flex;
+  flex-direction: column;
 }
 @keyframes cardIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
 .card:nth-child(1){animation-delay:.05s}
@@ -392,7 +399,7 @@ main {
 
 .card-tag {
   font-family: 'Barlow Condensed', sans-serif;
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 800;
   letter-spacing: 2px;
   color: var(--c, #888);
@@ -402,19 +409,19 @@ main {
   font-family: 'JetBrains Mono', monospace;
   font-size: 8px;
   color: var(--text3);
-  letter-spacing: .5px;
+  letter-spacing: .3px;
   margin-top: 3px;
   line-height: 1.3;
-  min-height: 22px;
+  min-height: 20px;
 }
 .card-seats {
   font-family: 'Barlow Condensed', sans-serif;
-  font-size: 56px;
+  font-size: 72px;
   font-weight: 900;
-  line-height: .95;
+  line-height: .9;
   letter-spacing: -2px;
   color: var(--c, #888);
-  margin: 10px 0 2px;
+  margin: 12px 0 2px;
 }
 .card-denom {
   font-family: 'JetBrains Mono', monospace;
@@ -425,8 +432,9 @@ main {
   height: 4px;
   background: rgba(255,255,255,.07);
   border-radius: 99px;
-  margin: 10px 0 6px;
+  margin: 12px 0 8px;
   overflow: hidden;
+  flex-shrink: 0;
 }
 .card-bar {
   height: 100%;
@@ -442,12 +450,12 @@ main {
   padding: 3px 8px;
   border-radius: 2px;
   text-transform: uppercase;
-  margin-top: 4px;
+  align-self: flex-start;
 }
-.status-leading { background: rgba(67,160,71,.2); color: #81c784; }
-.status-behind  { background: rgba(229,57,53,.15); color: #ef9a9a; }
+.status-leading { background: rgba(249,168,37,.15); color: #f9a825; }
+.status-behind  { background: rgba(229,57,53,.15);  color: #ef9a9a; }
 .status-trailing{ background: rgba(255,255,255,.06); color: var(--text3); }
-.status-won     { background: rgba(67,160,71,.3); color: #a5d6a7; }
+.status-won     { background: rgba(67,160,71,.3);    color: #a5d6a7; }
 
 /* ──────────────────────────────────────────
    CONSTITUENCY TABLE
@@ -632,6 +640,105 @@ main {
   position: absolute; top: -10px; animation: fall linear infinite;
 }
 @keyframes fall { to{transform:translateY(110vh) rotate(720deg);opacity:0} }
+
+/* ──────────────────────────────────────────
+   RACE TO MAJORITY
+   ────────────────────────────────────────── */
+.race-section { flex-shrink: 0; }
+.race-bars { display: flex; flex-direction: column; gap: 10px; }
+.race-row {
+  display: grid;
+  grid-template-columns: 70px 1fr 44px;
+  align-items: center;
+  gap: 12px;
+}
+.race-name {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 14px; font-weight: 800; letter-spacing: 1px;
+  text-align: right;
+}
+.race-track {
+  position: relative; height: 10px;
+  background: rgba(255,255,255,.06); border-radius: 99px; overflow: visible;
+}
+.race-fill {
+  height: 100%; border-radius: 99px;
+  transition: width 1.4s cubic-bezier(.4,0,.2,1);
+}
+.race-maj-line {
+  position: absolute; top: -6px; bottom: -6px; width: 2px;
+  background: rgba(255,255,255,.25); left: calc(118/234*100%); z-index: 2;
+}
+.race-maj-line::after {
+  content: '118'; position: absolute; top: -18px; left: 4px;
+  font-family: 'JetBrains Mono', monospace; font-size: 8px;
+  color: rgba(255,255,255,.3); white-space: nowrap;
+}
+.race-count {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 20px; font-weight: 800; text-align: center;
+}
+
+/* ──────────────────────────────────────────
+   BOTTOM ROW
+   ────────────────────────────────────────── */
+.bottom-row {
+  display: grid;
+  grid-template-columns: 1fr 240px;
+  gap: 12px;
+  flex: 1;
+  min-height: 0;
+}
+.insight-panel {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+}
+.insight-line {
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 12.5px;
+  color: var(--text2);
+  line-height: 1.55;
+  font-family: 'Barlow', sans-serif;
+}
+.insight-line:last-child { border-bottom: none; padding-bottom: 0; }
+.insight-line:first-of-type { padding-top: 8px; }
+
+.donut-panel {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+}
+.donut-wrap {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 8px;
+  flex: 1;
+}
+.donut-legend {
+  display: flex; flex-direction: column; gap: 8px; flex: 1;
+}
+.legend-row { display: flex; align-items: center; gap: 8px; }
+.legend-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.legend-name {
+  font-family: 'JetBrains Mono', monospace; font-size: 8px;
+  color: var(--text3); flex: 1; letter-spacing: .5px;
+}
+.legend-val {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 18px; font-weight: 800; line-height: 1;
+}
+.legend-empty {
+  font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text3);
+}
 
 /* ──────────────────────────────────────────
    RESPONSIVE

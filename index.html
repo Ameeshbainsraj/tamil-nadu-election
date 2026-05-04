@@ -141,7 +141,32 @@
       <div class="cards-label">PARTY SCORECARDS</div>
       <div class="party-cards" id="party-cards"></div>
 
+      <!-- RACE TO MAJORITY -->
+      <div class="race-section">
+        <div class="cards-label">RACE TO 118 — MAJORITY TRACKER</div>
+        <div class="race-bars" id="race-bars"></div>
+      </div>
 
+      <!-- BOTTOM ROW: Insights + Donut -->
+      <div class="bottom-row">
+        <div class="insight-panel">
+          <div class="cards-label">LIVE INSIGHT</div>
+          <div class="insight-line" id="insight-meaning">📊 Counting has just begun.</div>
+          <div class="insight-line" id="insight-closest">🏁 No clear leader yet.</div>
+          <div class="insight-line" id="insight-trend">📈 Too early to call.</div>
+        </div>
+        <div class="donut-panel">
+          <div class="cards-label">SEAT SHARE</div>
+          <div class="donut-wrap">
+            <svg id="donut-svg" viewBox="0 0 140 140" width="110" height="110" style="flex-shrink:0">
+              <circle cx="70" cy="70" r="50" fill="none" stroke="#1e2130" stroke-width="22"/>
+            </svg>
+            <div class="donut-legend" id="donut-legend">
+              <div class="legend-empty">No results yet</div>
+            </div>
+          </div>
+        </div>
+      </div>
 
     </main>
   </div>

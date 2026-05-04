@@ -177,7 +177,96 @@ function renderCards(parties) {
   });
 }
 
-/* ── RENDER ALLIANCE SIDEBAR ── */
+/* ── RENDER RACE BARS ── */
+function renderRace(parties) {
+  const container = document.getElementById('race-bars');
+  if (!container) return;
+  container.innerHTML = '';
+  const keys = Object.keys(parties).filter(k => k !== 'others')
+    .sort((a, b) => parties[b].seats - parties[a].seats);
+  keys.forEach(key => {
+    const p    = parties[key];
+    const meta = PARTY_META[key] || { color: '#888', bar: '#888' };
+    const pct  = Math.min(p.seats / TOTAL_SEATS * 100, 100);
+    container.innerHTML += `
+      <div class="race-row">
+        <div class="race-name" style="color:${meta.bar}">${p.short}</div>
+        <div class="race-track">
+          <div class="race-fill" style="width:${pct}%;background:${meta.bar}"></div>
+          <div class="race-maj-line"></div>
+        </div>
+        <div class="race-count" style="color:${meta.bar}">${p.seats}</div>
+      </div>
+    `;
+  });
+}
+
+/* ── RENDER DONUT ── */
+function renderDonut(parties) {
+  const svg    = document.getElementById('donut-svg');
+  const legend = document.getElementById('donut-legend');
+  if (!svg || !legend) return;
+  const keys  = Object.keys(parties);
+  const total = keys.reduce((s, k) => s + parties[k].seats, 0);
+  svg.querySelectorAll('.dseg').forEach(el => el.remove());
+  legend.innerHTML = '';
+  if (total === 0) { legend.innerHTML = '<div class="legend-empty">No results yet</div>'; return; }
+  const r = 50, circ = 2 * Math.PI * r;
+  let offset = 0;
+  keys.forEach(key => {
+    const p    = parties[key];
+    const meta = PARTY_META[key] || { bar: '#888' };
+    const frac = p.seats / total;
+    const dash = frac * circ;
+    const gap  = circ - dash;
+    const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    circle.setAttribute('class', 'dseg');
+    circle.setAttribute('cx', 70); circle.setAttribute('cy', 70); circle.setAttribute('r', r);
+    circle.setAttribute('fill', 'none'); circle.setAttribute('stroke', meta.bar);
+    circle.setAttribute('stroke-width', 22);
+    circle.setAttribute('stroke-dasharray', `${dash} ${gap}`);
+    circle.setAttribute('stroke-dashoffset', circ * 0.25 - offset * circ);
+    circle.style.transition = 'stroke-dasharray 1.2s ease';
+    svg.appendChild(circle);
+    offset += frac;
+    legend.innerHTML += `
+      <div class="legend-row">
+        <div class="legend-dot" style="background:${meta.bar}"></div>
+        <div class="legend-name">${p.short}</div>
+        <div class="legend-val" style="color:${meta.bar}">${p.seats}</div>
+      </div>`;
+  });
+}
+
+/* ── INSIGHTS ── */
+function renderInsights(parties) {
+  const keys    = Object.keys(parties);
+  const counted = keys.reduce((s, k) => s + parties[k].seats, 0);
+  const pct     = Math.round(counted / TOTAL_SEATS * 100);
+  const leader  = getLeader(parties);
+  let meaning = `📊 ${pct}% of seats declared (${counted}/${TOTAL_SEATS}). Counting ongoing.`;
+  if (pct === 0) meaning = '📊 Counting has just begun. No results yet.';
+  if (pct > 80)  meaning = `📊 ${pct}% declared — result is nearly certain.`;
+  const closest = leader
+    ? `🏁 ${leader.short} needs ${Math.max(0, MAJORITY - leader.seats)} more seats for majority (at ${leader.seats}).`
+    : '🏁 No clear leader yet.';
+  const sorted = [...keys].sort((a, b) => parties[b].seats - parties[a].seats);
+  let trend = '📈 Trend: Too early to call.';
+  if (sorted.length >= 2) {
+    const f = parties[sorted[0]], s = parties[sorted[1]], gap = f.seats - s.seats;
+    if (gap > 20)               trend = `📈 ${f.short} has a commanding ${gap}-seat lead over ${s.short}.`;
+    else if (gap > 10)          trend = `📈 ${f.short} pulling ahead — ${gap}-seat lead over ${s.short}.`;
+    else if (gap <= 5 && counted > 20) trend = `⚡ Extremely tight! Only ${gap} seats separate the top two.`;
+  }
+  const m = document.getElementById('insight-meaning');
+  const c = document.getElementById('insight-closest');
+  const t = document.getElementById('insight-trend');
+  if (m) m.textContent = meaning;
+  if (c) c.textContent = closest;
+  if (t) t.textContent = trend;
+}
+
+
 function renderAllianceSidebar(parties) {
   const container = document.getElementById('alliance-sidebar');
   if (!container) return;
@@ -274,6 +363,9 @@ function render(data) {
   renderTicker(parties);
   renderQuickView(parties);
   renderHeaderStats(parties);
+  renderRace(parties);
+  renderDonut(parties);
+  renderInsights(parties);
 
 
   document.getElementById('last-updated').textContent =

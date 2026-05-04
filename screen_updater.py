@@ -66,7 +66,20 @@ Return ONLY this JSON:
     match = re.search(r'\{.*\}', raw, re.DOTALL)
     if not match:
         raise ValueError(f"No JSON in response: {raw}")
-    return json.loads(match.group())
+
+    cleaned = match.group()
+    cleaned = re.sub(r',\s*}', '}', cleaned)
+    cleaned = re.sub(r',\s*]', ']', cleaned)
+    cleaned = re.sub(r'(\d)\s+(\d)', r'\1\2', cleaned)
+    try:
+        return json.loads(cleaned)
+    except json.JSONDecodeError:
+        print(f"⚠️  JSON parse failed, extracting manually from:\n{raw}")
+        result = {}
+        for party in ["tvk", "dmk", "admk", "ntk", "others"]:
+            m = re.search(rf'"{party}".*?"seats":\s*(\d+)', raw, re.DOTALL)
+            result[party] = {"seats": int(m.group(1)) if m else 0, "won": 0, "leading": 0}
+        return result
 
 def write_and_push(data: dict):
     output = {

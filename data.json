@@ -1,29 +1,29 @@
 {
-  "last_updated": "2026-05-04T16:55:13.549881",
+  "last_updated": "2026-05-04T16:57:47.139562",
   "results": {
     "tvk": {
-      "seats": 106,
-      "won": 106,
+      "seats": 107,
+      "won": 107,
       "leading": 0
     },
     "dmk": {
-      "seats": 106,
-      "won": 106,
+      "seats": 0,
+      "won": 0,
       "leading": 0
     },
     "admk": {
-      "seats": 106,
-      "won": 106,
+      "seats": 0,
+      "won": 0,
       "leading": 0
     },
     "ntk": {
-      "seats": 106,
-      "won": 106,
+      "seats": 0,
+      "won": 0,
       "leading": 0
     },
     "others": {
-      "seats": 106,
-      "won": 106,
+      "seats": 0,
+      "won": 0,
       "leading": 0
     }
   }

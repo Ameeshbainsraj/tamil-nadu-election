@@ -2,11 +2,10 @@
 
 > A real-time election results dashboard powered by AI Vision, auto-updating every 2 minutes.
 
-![Live Demo](https://img.shields.io/badge/Live-Demo-brightgreen)
-![Tech](https://img.shields.io/badge/Stack-Python%20%7C%20JS%20%7C%20Groq%20AI-blue)
+
 
 ## 🔴 Live Site
-👉 https://your-project.vercel.app
+👉 [https://your-project.vercel.app](https://tamil-nadu-election.vercel.app/)
 
 ---
 
@@ -60,12 +59,6 @@ python screen_updater.py "https://www.youtube.com/watch?v=XXXX"
 
 
 
-
-This was fromt the actual live youtube 
-<img width="1385" height="778" alt="image" src="https://github.com/user-attachments/assets/1ceed07b-16bd-48b2-8cde-e7ccb41437e2" />
-
-This was updating Live
-<img width="1911" height="933" alt="image" src="https://github.com/user-attachments/assets/ac305490-a4d9-4f1e-a465-f8e8731b9e07" />
 
 
 

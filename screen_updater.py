@@ -1,4 +1,4 @@
-import subprocess, datetime, json, os, re, time, base64
+import sys, subprocess, datetime, json, os, re, base64
 import yt_dlp
 from groq import Groq
 from dotenv import load_dotenv
@@ -6,8 +6,8 @@ from dotenv import load_dotenv
 load_dotenv()
 client = Groq(api_key=os.environ.get("GROQ_API_KEY"))
 
+
 def grab_youtube_frame(yt_url: str) -> str:
-    """Download a single frame from the YouTube stream as an image."""
     import tempfile
     tmpdir = tempfile.mkdtemp()
     frame_path = os.path.join(tmpdir, "frame.jpg")
@@ -17,20 +17,18 @@ def grab_youtube_frame(yt_url: str) -> str:
         "quiet": True,
         "no_warnings": True,
     }
-    # Get stream URL
     with yt_dlp.YoutubeDL(opts) as ydl:
         info = ydl.extract_info(yt_url, download=False)
         stream_url = info["url"]
 
-    # Use ffmpeg to grab one frame
     subprocess.run([
         "ffmpeg", "-y", "-i", stream_url,
         "-frames:v", "1", "-q:v", "2", frame_path
     ], capture_output=True)
     return frame_path
 
+
 def extract_seats_from_image(img_path: str) -> dict:
-    """Send frame to Groq Vision → extract seat numbers."""
     print("👁️  Reading text from video frame...")
     with open(img_path, "rb") as f:
         b64 = base64.b64encode(f.read()).decode()
@@ -81,7 +79,14 @@ Return ONLY this JSON:
             result[party] = {"seats": int(m.group(1)) if m else 0, "won": 0, "leading": 0}
         return result
 
+
 def write_and_push(data: dict):
+    # Fix: if won+leading = 0 but seats > 0, put all in won
+    for key in data:
+        d = data[key]
+        if d.get('seats', 0) > 0 and d.get('won', 0) == 0 and d.get('leading', 0) == 0:
+            d['won'] = d['seats']
+
     output = {
         "last_updated": datetime.datetime.now().isoformat(),
         "results": data
@@ -97,9 +102,10 @@ def write_and_push(data: dict):
     except subprocess.CalledProcessError as e:
         print(f"⚠️  Git push failed: {e}")
 
+
 def main():
     if len(sys.argv) < 2:
-        print("Usage: python screen_updater.py \"https://www.youtube.com/watch?v=XXXX\"")
+        print('Usage: python screen_updater.py "https://www.youtube.com/watch?v=XXXX"')
         sys.exit(1)
 
     yt_url = sys.argv[1]
@@ -112,6 +118,6 @@ def main():
     import shutil
     shutil.rmtree(os.path.dirname(frame), ignore_errors=True)
 
-import sys
+
 if __name__ == "__main__":
     main()

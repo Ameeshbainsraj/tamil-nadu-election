@@ -3,8 +3,8 @@ const MAJORITY = 118;
 const TOTAL_SEATS = 234;
 const REFRESH_INTERVAL = 12000;
 
-const SHEET_URL = 'https://api.allorigins.win/raw?url=' + encodeURIComponent('https://docs.google.com/spreadsheets/d/e/2PACX-1vSa1i5BKO3-c2Lm3Gxcc9XLo7qeMhEFKzZtlnXt84Hb03W8wu7f91LvsKs7brLBK07K9t6YBwh2AZL5/pub?gid=0&single=true&output=csv');
-
+const SHEET_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSa1i5BKO3-c2Lm3Gxcc9XLo7qeMhEFKzZtlnXt84Hb03W8wu7f91LvsKs7brLBK07K9t6YBwh2AZL5/pub?gid=0&single=true&output=csv';
+const SHEET_URL = 'https://corsproxy.io/?' + encodeURIComponent(SHEET_CSV);
 // ── PARSE CSV ──
 function parseCSV(text) {
   const lines = text.trim().split('\n');

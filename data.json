@@ -1,22 +1,30 @@
 {
-  "last_updated": "2026-05-04 10:00:00",
-  "total_seats": 234,
-  "majority": 118,
-  "parties": {
+  "last_updated": "2026-05-04T13:29:12.777484",
+  "results": {
     "tvk": {
-      "name": "Tamil Vettri Kazhagam",
-      "short": "TVK",
-      "seats": 45
+      "seats": 108,
+      "won": 0,
+      "leading": 0
     },
     "dmk": {
-      "name": "Dravida Munnetra Kazhagam",
-      "short": "DMK",
-      "seats": 72
+      "seats": 73,
+      "won": 0,
+      "leading": 0
+    },
+    "admk": {
+      "seats": 53,
+      "won": 0,
+      "leading": 0
+    },
+    "ntk": {
+      "seats": 0,
+      "won": 0,
+      "leading": 0
     },
     "others": {
-      "name": "Others & Independents",
-      "short": "OTH",
-      "seats": 31
+      "seats": 0,
+      "won": 0,
+      "leading": 0
     }
   }
 }

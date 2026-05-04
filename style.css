@@ -486,3 +486,169 @@ footer {
 @media (max-width: 480px) {
   .party-cards { grid-template-columns: 1fr; }
 }
+
+
+/* ── CARD ENHANCEMENTS ── */
+.card-glow-bg {
+  position: absolute;
+  top: -60px; right: -60px;
+  width: 200px; height: 200px;
+  border-radius: 50%;
+  filter: blur(60px);
+  opacity: 0.15;
+  pointer-events: none;
+  transition: opacity 0.3s;
+}
+
+.card:hover .card-glow-bg { opacity: 0.3; }
+
+.card-top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 16px;
+}
+
+.card-alliance {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 2px;
+  padding: 4px 10px;
+  border: 1px solid;
+  border-radius: 99px;
+  opacity: 0.7;
+}
+
+.card-leading {
+  border-color: rgba(255,255,255,0.15) !important;
+}
+
+/* ── MAJORITY METER ── */
+.majority-meter-section {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 32px 28px;
+  animation: cardIn 0.6s cubic-bezier(0.34,1.56,0.64,1) 0.45s both;
+}
+
+.meter-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.meter-label span:first-child {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 4px;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+
+.meter-sub {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--win);
+  letter-spacing: 1px;
+}
+
+.meter-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.meter-row {
+  display: grid;
+  grid-template-columns: 60px 1fr 50px;
+  align-items: center;
+  gap: 16px;
+}
+
+.meter-party-name {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-align: right;
+}
+
+.meter-track {
+  position: relative;
+  height: 8px;
+  background: rgba(255,255,255,0.05);
+  border-radius: 99px;
+  overflow: visible;
+}
+
+.meter-fill {
+  height: 100%;
+  border-radius: 99px;
+  transition: width 1s cubic-bezier(0.4,0,0.2,1);
+  position: relative;
+}
+
+.meter-mark {
+  position: absolute;
+  top: -6px;
+  right: 0;
+  width: 1px;
+  height: 20px;
+  background: rgba(0,230,118,0.4);
+  left: 100%;
+}
+
+.meter-count {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 22px;
+  letter-spacing: 1px;
+  text-align: center;
+}
+
+/* ── TICKER ── */
+.ticker {
+  position: relative;
+  z-index: 1;
+  background: rgba(8,15,26,0.9);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  padding: 10px 0;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.ticker-inner {
+  display: inline-flex;
+  align-items: center;
+  gap: 0;
+  animation: tickerScroll 20s linear infinite;
+}
+
+@keyframes tickerScroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+.ticker-item {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 1px;
+  padding: 0 24px;
+  color: var(--muted);
+}
+
+.ticker-sep {
+  color: var(--border);
+  font-size: 16px;
+}
+
+/* ── VICTORY SUB ── */
+.victory-sub {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 3px;
+  color: var(--muted);
+  margin-top: 12px;
+}

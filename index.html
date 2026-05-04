@@ -6,7 +6,7 @@
 <title>TN26 · Tamil Nadu Election 2026 · Live</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -26,9 +26,7 @@
 
 <!-- SIDEBAR NAV -->
 <nav class="sidebar-nav">
-  <div class="nav-logo">
-    <span class="nav-logo-box">TN</span>
-  </div>
+  <div class="nav-logo"><span class="nav-logo-box">TN</span></div>
   <div class="nav-items">
     <button class="nav-item active" title="Dashboard">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
@@ -36,16 +34,14 @@
     <button class="nav-item" title="Stats">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
     </button>
-    <button class="nav-item" title="Alliance">
+    <button class="nav-item" title="Globe">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
     </button>
     <button class="nav-item" title="Settings">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
     </button>
   </div>
-  <div class="nav-bottom">
-    <div class="live-dot-nav"></div>
-  </div>
+  <div class="nav-bottom"><div class="live-dot-nav"></div></div>
 </nav>
 
 <!-- MAIN WRAPPER -->
@@ -55,7 +51,7 @@
   <header class="topbar">
     <div class="topbar-left">
       <div class="topbar-title">Tamil Nadu Elections 2026</div>
-      <div class="topbar-sub">Live results · Updates every 12s</div>
+      <div class="topbar-sub">Live results · Updates every 12s · 234 Seats · Majority: 118</div>
     </div>
     <div class="topbar-center">
       <div class="ticker-wrap">
@@ -80,17 +76,17 @@
     </div>
   </header>
 
-  <!-- DASHBOARD GRID -->
+  <!-- DASHBOARD -->
   <div class="dashboard">
 
-    <!-- ROW 1: Header stats -->
+    <!-- ROW 1: Stats -->
     <div class="stats-row">
-      <div class="stat-card" id="sc-counting">
+      <div class="stat-card">
         <div class="stat-label">Seats Counting</div>
         <div class="stat-num" id="h-counting">0</div>
         <div class="stat-sub">of 234 total</div>
       </div>
-      <div class="stat-card" id="sc-declared">
+      <div class="stat-card">
         <div class="stat-label">Won / Leading</div>
         <div class="stat-num" id="h-declared">0</div>
         <div class="stat-sub">Total declared</div>
@@ -100,10 +96,10 @@
         <div class="stat-num lime">118</div>
         <div class="stat-sub">Seats needed</div>
       </div>
-      <div class="stat-card" id="sc-pct">
+      <div class="stat-card">
         <div class="stat-label">Counted</div>
         <div class="stat-num" id="h-pct">0%</div>
-        <div class="stat-sub">of all seats</div>
+        <div class="stat-sub">of all 234 seats</div>
       </div>
     </div>
 
@@ -123,7 +119,7 @@
         </div>
         <div class="donut-inner">
           <div class="donut-chart-wrap">
-            <canvas id="donut-canvas" width="140" height="140"></canvas>
+            <canvas id="donut-canvas" width="150" height="150"></canvas>
             <div class="donut-center">
               <span id="donut-num">0</span>
               <span class="donut-sub">declared</span>
@@ -136,22 +132,20 @@
       </div>
     </div>
 
-    <!-- ROW 3: Race to Majority + Alliance + Insight -->
+    <!-- ROW 3: Race + Insight (2 col, alliance REMOVED) -->
     <div class="row3">
 
       <div class="panel race-panel">
         <div class="panel-header">
-          <span class="panel-title">Race to 118</span>
-          <span class="panel-badge">Majority tracker</span>
+          <span class="panel-title">Race to Majority · 118</span>
+          <span class="panel-badge">of 234 seats</span>
         </div>
         <div class="race-bars" id="race-bars"></div>
-      </div>
-
-      <div class="panel alliance-panel">
-        <div class="panel-header">
-          <span class="panel-title">Alliance Standings</span>
+        <!-- Detailed party table fills the rest -->
+        <div class="party-table-head">
+          <span>Party</span><span>Won</span><span>Leading</span><span>Total</span>
         </div>
-        <div id="alliance-sb"></div>
+        <div id="party-table"></div>
       </div>
 
       <div class="panel insight-panel">
@@ -164,6 +158,31 @@
           <div class="insight-line"><span class="i-icon">🏁</span><span>No clear leader yet.</span></div>
           <div class="insight-line"><span class="i-icon">📈</span><span>Too early to call.</span></div>
         </div>
+
+        <!-- Google Sheets Guide -->
+        <div class="sheets-guide">
+          <div class="sg-title">📡 Google Sheets Data Source</div>
+          <div class="sg-body">
+            <div class="sg-step"><span class="sg-num">1</span><span>Open your sheet → <strong>Share</strong> → <strong>"Anyone with the link"</strong> → Viewer → Save</span></div>
+            <div class="sg-step"><span class="sg-num">2</span><span>Sheet columns must be exactly: <code>party · short · seats · won · leading</code></span></div>
+            <div class="sg-step"><span class="sg-num">3</span><span>Party keys in column A: <code>tvk · dmk · admk · ntk · others</code></span></div>
+            <div class="sg-step"><span class="sg-num">4</span><span>Update <strong>seats</strong> = won + leading. Dashboard auto-refreshes every <strong>12 seconds</strong>.</span></div>
+            <div class="sg-example">
+              <div class="sg-row sg-header"><span>party</span><span>short</span><span>seats</span><span>won</span><span>leading</span></div>
+              <div class="sg-row"><span>tvk</span><span>TVK</span><span>110</span><span>85</span><span>25</span></div>
+              <div class="sg-row"><span>dmk</span><span>DMK+</span><span>50</span><span>40</span><span>10</span></div>
+              <div class="sg-row"><span>admk</span><span>ADMK</span><span>56</span><span>44</span><span>12</span></div>
+              <div class="sg-row"><span>ntk</span><span>NTK</span><span>0</span><span>0</span><span>0</span></div>
+              <div class="sg-row"><span>others</span><span>OTH</span><span>18</span><span>14</span><span>4</span></div>
+            </div>
+            <div class="sg-sources">
+              <div class="sg-src-title">Where to find live results:</div>
+              <a href="https://results.eci.gov.in" target="_blank" class="sg-link">🗳 Election Commission of India — results.eci.gov.in</a>
+              <a href="https://tnelections2026.in/results.html" target="_blank" class="sg-link">📊 TN Elections 2026 Dashboard</a>
+              <a href="https://en.wikipedia.org/wiki/2026_Tamil_Nadu_Legislative_Assembly_election" target="_blank" class="sg-link">📖 Wikipedia — 2026 TN Assembly election</a>
+            </div>
+          </div>
+        </div>
       </div>
 
     </div>
@@ -172,14 +191,14 @@
     <div class="quickview-bar">
       <span class="qv-label">Quick View</span>
       <div class="qv-items">
-        <div class="qv-item"><span class="qv-dot" style="background:#5c6bc0"></span>DMK+ <span class="qv-num" id="qv-dmk">0</span></div>
-        <div class="qv-item"><span class="qv-dot" style="background:#3dab48"></span>ADMK+ <span class="qv-num" id="qv-admk">0</span></div>
-        <div class="qv-item"><span class="qv-dot" style="background:#c8f53f"></span>TVK <span class="qv-num" id="qv-tvk">0</span></div>
-        <div class="qv-item"><span class="qv-dot" style="background:#f06c2a"></span>NTK <span class="qv-num" id="qv-ntk">0</span></div>
-        <div class="qv-item"><span class="qv-dot" style="background:#6e7485"></span>OTH <span class="qv-num" id="qv-oth">0</span></div>
+        <div class="qv-item"><span class="qv-dot" style="background:#7986cb"></span><span>DMK+</span><span class="qv-num" id="qv-dmk">0</span></div>
+        <div class="qv-item"><span class="qv-dot" style="background:#3dab48"></span><span>ADMK+</span><span class="qv-num" id="qv-admk">0</span></div>
+        <div class="qv-item"><span class="qv-dot" style="background:#c8f53f"></span><span>TVK</span><span class="qv-num" id="qv-tvk">0</span></div>
+        <div class="qv-item"><span class="qv-dot" style="background:#f06c2a"></span><span>NTK</span><span class="qv-num" id="qv-ntk">0</span></div>
+        <div class="qv-item"><span class="qv-dot" style="background:#6e7485"></span><span>OTH</span><span class="qv-num" id="qv-oth">0</span></div>
       </div>
       <div class="qv-right">
-        <span class="data-source">📡 Google Sheets</span>
+        <span class="data-source">📡 Google Sheets Live</span>
         <span class="qv-time" id="qv-time">—</span>
       </div>
     </div>

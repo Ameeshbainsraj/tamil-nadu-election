@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-05-04T16:40:16.834892",
+  "last_updated": "2026-05-04T16:42:42.501327",
   "results": {
     "tvk": {
       "seats": 106,
@@ -12,8 +12,8 @@
       "leading": 0
     },
     "admk": {
-      "seats": 54,
-      "won": 54,
+      "seats": 0,
+      "won": 0,
       "leading": 0
     },
     "ntk": {
@@ -22,8 +22,8 @@
       "leading": 0
     },
     "others": {
-      "seats": 0,
-      "won": 0,
+      "seats": 106,
+      "won": 106,
       "leading": 0
     }
   }
